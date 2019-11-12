@@ -1,4 +1,4 @@
 *.o
 *.depend
 *.layout
-bin/debug*
+/bin/debug*
