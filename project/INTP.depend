@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1573496578 source:/home/ayush/Documents/Projects/INTP/src/intp.c
+	"intp.h"
+
+1573495207 /home/ayush/Documents/Projects/INTP/src/intp.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1573493223 source:/home/ayush/Documents/Projects/INTP/src/main.c
+	<stdio.h>
+	<stdlib.h>
+	"intp.h"
+
