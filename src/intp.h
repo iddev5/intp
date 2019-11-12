@@ -6,6 +6,20 @@
 #include <string.h>
 
 //////////////////////////////
+//----------Logging-----------
+//////////////////////////////
+
+static void intp__warn(char *str) {
+    printf("%s\n", str);
+}
+
+static int intp__error(char *str) {
+    printf("%s\n", str);
+    return -1;
+}
+
+
+//////////////////////////////
 //----------Utilities---------
 //////////////////////////////
 
@@ -44,14 +58,6 @@ static int intp_is_id(char c) {
     return intp_is_alpha(c) || c == '_';
 }
 
-/*
-//----------Utilities---------
-int intp_is_space(char c);
-int intp_is_alpha(char c);
-int intp_is_num(char c);
-int intp_is_id(char c);
-*/
-
 //----------Enums-------------
 enum intp__token_type {
     hex,
@@ -73,6 +79,12 @@ typedef struct {
     char *word;
     /**<----->*/
 } intp_info;
+
+//----------Lexer-------------
+int intp__lex(intp_info *info);
+
+//----------Parser------------
+void intp__parse(intp_info *info);
 
 //----------Main--------------
 int intp_init(intp_info *info);

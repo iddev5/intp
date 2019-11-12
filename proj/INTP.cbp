@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="../bin/debug/intp" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../bin/object_debug" />
+				<Option object_output="../bin/object/debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -17,7 +17,7 @@
 			</Target>
 			<Target title="Release">
 				<Option output="../bin/release/intp" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../bin/object_release" />
+				<Option object_output="../bin/object/release" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -32,11 +32,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../intp.c">
+		<Unit filename="../src/intp.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../intp.h" />
-		<Unit filename="../main.c">
+		<Unit filename="../src/intp.h" />
+		<Unit filename="../src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
