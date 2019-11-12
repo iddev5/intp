@@ -12,3 +12,13 @@
 	<stdlib.h>
 	"intp.h"
 
+1573493223 source:/home/ayush/Documents/Projects/INTP/INTP/main.c
+	<stdio.h>
+	<stdlib.h>
+	"intp.h"
+
+1573543681 /home/ayush/Documents/Projects/INTP/INTP/intp.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+

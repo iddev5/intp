@@ -18,15 +18,6 @@ int intp__error(char *str) {
 //////////////////////////////
 
 /*
-char intp__lex_symbols[28] = {
-    '~', '!', '@', '#',
-    '%', '^', '&', '*',
-    '(', ')', '-', '_',
-    '+', '=', '{', '}',
-    '[', ']', '|', '\\',
-    ':', ';', '\"', '\'',
-    '<', '>', '?', '/'
-};
 
 char *intp__lex_operators[12] = {
     "+", "-", "*", "/", "^", "%",
@@ -76,39 +67,57 @@ int intp__lex_next_ch(intp_info *info) {
 
 int intp__lex_opr(intp_info *info) {
 
-    strcpy(info->word, "");
+    //strcpy(info->word, "");
 
-    if(*info->data == '+') {
+    int times = 0;
+    int type = -1;
 
-        intp__lex_next_ch(info);
+    do {
+        *(info->tok+times) = *info->data;
 
         if(*info->data == '+') {
-            strcpy(info->word, "++");
-            intp__lex_next_ch(info);
-            return op_inc;
-        }
-        else {
-            strcpy(info->word, "+");
-            intp__lex_next_ch(info);
-            return op_add;
-        }
-    }
 
-    else if(*info->data == '-') {
+            intp__lex_next_ch(info); times++;
 
-        intp__lex_next_ch(info);
+            if(*info->data == '+') {
+                type = op_inc;
+                //strcpy(info->word, "++");
+                //intp__lex_next_ch(info);
+                //return op_inc;
+            }
+            else {
+                type = op_add;
+                //strcpy(info->word, "+");
+                //intp__lex_next_ch(info);
+                //return op_add;
+            }
+        }
 
-        if(*info->data == '-') {
-            strcpy(info->word, "--");
-            intp__lex_next_ch(info);
-            return op_dec;
+        else if(*info->data == '-') {
+
+            intp__lex_next_ch(info); times++;
+
+            if(*info->data == '-') {
+                type = op_dec;
+                //strcpy(info->word, "--");
+                //intp__lex_next_ch(info);
+                //return op_dec;
+            }
+            else {
+                type = op_sub;
+                //strcpy(info->word, "-");
+                //intp__lex_next_ch(info);
+                //return op_sub;
+            }
         }
-        else {
-            strcpy(info->word, "-");
-            intp__lex_next_ch(info);
-            return op_sub;
-        }
-    }
+
+    } while(intp_is_sym(*info->data));
+
+    strcpy(info->word, info->tok);
+
+    for(int i = 0; i <= times; i++) *(info->tok+i) = '\0';
+
+    return type;
 
 }
 

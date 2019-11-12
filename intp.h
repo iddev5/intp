@@ -9,8 +9,27 @@
 //----------Utilities---------
 //////////////////////////////
 
+#define SYMBOL_COUNT 28
+
+static char intp__lex_symbols[SYMBOL_COUNT] = {
+    '~', '!', '@', '#',
+    '%', '^', '&', '*',
+    '(', ')', '-', '_',
+    '+', '=', '{', '}',
+    '[', ']', '|', '\\',
+    ':', ';', '\"', '\'',
+    '<', '>', '?', '/'
+};
+
 static int intp_is_space(char c) {
     return (c == ' ');
+}
+
+static int intp_is_sym(char c) {
+    for(int i = 0; i < SYMBOL_COUNT; i++) {
+        if (c == intp__lex_symbols[i]) return 1;
+    }
+    return 0;
 }
 
 static int intp_is_alpha(char c) {
