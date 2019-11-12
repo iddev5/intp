@@ -39,7 +39,6 @@
 		<Unit filename="../main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../test.txt" />
 		<Extensions>
 			<code_completion />
 			<debugger />

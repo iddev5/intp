@@ -57,8 +57,7 @@ enum intp__token_type {
     hex,
     bin,
     num,
-    al,
-
+    alpha,
     op_add,
     op_sub,
     op_mul,

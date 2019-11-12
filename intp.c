@@ -60,7 +60,7 @@ int intp__lex_check_exe_sym(intp_info *info) {
     }
 */
 
-int intp__lex_next_ch(intp_info *info) {
+void intp__lex_next_ch(intp_info *info) {
     *info->data++;
 }
 
@@ -117,6 +117,8 @@ int intp__lex_opr(intp_info *info) {
 
     for(int i = 0; i <= times; i++) *(info->tok+i) = '\0';
 
+    printf("just before: %d\n", type);
+
     return type;
 
 }
@@ -167,13 +169,11 @@ int intp__lex_al(intp_info *info) {
 
         *(info->tok+times) = *info->data;
 
-        printf("id: %s", info->tok);
-        printf("\tdata: %c", *info->data);
+        printf("id: %s\t", info->tok);
+        printf("data: %c\n", *info->data);
 
         *info->data++;
         times++;
-
-        printf("\ttimes: %d\n", times);
 
     } while(intp_is_id(*info->data));
 
@@ -181,24 +181,28 @@ int intp__lex_al(intp_info *info) {
 
     for(int i = 0; i <= times; i++) *(info->tok+i) = '\0';
 
-    return al;
+    return alpha;
 }
 
 int intp__lex(intp_info *info) {
+
+    int type = -1;
 
     if(intp_is_space(*info->data)) {
         do { *info->data++; } while(intp_is_space(*info->data));
     }
 
-    intp__lex_opr(info);
+    type = intp__lex_opr(info);
 
     if(intp_is_num(*info->data)) {
-        return intp__lex_num(info);
+        type = intp__lex_num(info);
     }
 
     if(intp_is_id(*info->data)) {
-        return intp__lex_al(info);
+        type = intp__lex_al(info);
     }
+
+    return type;
 }
 
 //////////////////////////////
@@ -208,11 +212,12 @@ int intp__lex(intp_info *info) {
 void intp__parse(intp_info *info) {
 
     //intp__lex(info);
+    int lex_info = -1;
 
     while(1) {
 
         /*<---------------------->*/
-        printf("word: %s\n", info->word);
+        printf("word: %s\t\ttype:%d\n", info->word, lex_info);
         if(strcmp(info->word, "hi") == 0) {
             printf("output: \"this is a hi\"\n");
         }
@@ -230,7 +235,7 @@ void intp__parse(intp_info *info) {
         }
 
         if(*info->data == '\0') break;
-        intp__lex(info);
+        lex_info = intp__lex(info);
 
     }
 
