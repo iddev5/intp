@@ -18,50 +18,24 @@ int intp__lex_opr(intp_info *info) {
 
     do {
         *(info->tok+times) = *info->data;
-
-        if(*info->data == '+') {
-
-            intp__lex_next_ch(info); times++;
-
-            if(*info->data == '+') {
-                type = op_inc;
-                //strcpy(info->word, "++");
-                //intp__lex_next_ch(info);
-                //return op_inc;
-            }
-            else {
-                type = op_add;
-                //strcpy(info->word, "+");
-                //intp__lex_next_ch(info);
-                //return op_add;
-            }
-        }
-
-        else if(*info->data == '-') {
-
-            intp__lex_next_ch(info); times++;
-
-            if(*info->data == '-') {
-                type = op_dec;
-                //strcpy(info->word, "--");
-                //intp__lex_next_ch(info);
-                //return op_dec;
-            }
-            else {
-                type = op_sub;
-                //strcpy(info->word, "-");
-                //intp__lex_next_ch(info);
-                //return op_sub;
-            }
-        }
+        printf("id: %c\t", *info->data);
+        intp__lex_next_ch(info);
+        times++;
 
     } while(intp_is_sym(*info->data));
+
+    if(strcmp(info->tok, "+")==0) type = op_add;
+    else if(strcmp(info->tok, "-")==0) type = op_sub;
+    else if(strcmp(info->tok, "++")==0) type = op_inc;
+    else if(strcmp(info->tok, "--")==0) type = op_dec;
+
+    //printf("tok: %s\ttimes: %d\t", info->tok, times);
 
     strcpy(info->word, info->tok);
 
     for(int i = 0; i <= times; i++) *(info->tok+i) = '\0';
 
-    printf("just before: %d\n", type);
+    //printf("just before: %d\n", type);
 
     return type;
 
@@ -116,7 +90,7 @@ int intp__lex_al(intp_info *info) {
         printf("id: %s\t", info->tok);
         printf("data: %c\n", *info->data);
 
-        *info->data++;
+        intp__lex_next_ch(info);
         times++;
 
     } while(intp_is_id(*info->data));
@@ -136,7 +110,9 @@ int intp__lex(intp_info *info) {
         do { *info->data++; } while(intp_is_space(*info->data));
     }
 
-    type = intp__lex_opr(info);
+    if(intp_is_sym(*info->data)) {
+        type = intp__lex_opr(info);
+    }
 
     if(intp_is_num(*info->data)) {
         type = intp__lex_num(info);
@@ -194,3 +170,40 @@ int intp__lex_check_exe_sym(intp_info *info) {
         }
     }
 */
+
+/*
+        if(*info->data == '+') {
+
+            intp__lex_next_ch(info); times++;
+
+            if(*info->data == '+') {
+                printf("first tok: %s\t", info->tok);
+                type = op_inc;
+                break;
+
+            }
+            else {
+                printf("first tok: %s\t", info->tok);
+                type = op_add;
+                break;
+
+            }
+        }
+
+        else if(*info->data == '-') {
+
+            intp__lex_next_ch(info); times++;
+
+            if(*info->data == '-') {
+                printf("first tok: %s\t", info->tok);
+                type = op_dec;
+                break;
+
+            }
+            else {
+                printf("first tok: %s", info->tok);
+                type = op_sub;
+                break;
+
+            }
+        }*/
