@@ -1,40 +1,63 @@
 #include "intp.h"
 
 //////////////////////////////
+//----------Logging-----------
+//////////////////////////////
+
+FILE *log;
+
+void _warn(char *str) {
+    // To do: time, line number, column number.
+    fprintf(log, "%s\n", str);
+}
+
+int _error(char *str) {
+    // To do: line number and coloured output.
+    printf("%s\n", str);
+    return -1;
+}
+
+//////////////////////////////
 //----------Main--------------
 //////////////////////////////
 
 int intp_init(intp_info *info) {
+    // Open the log file only when the interpreter is initialzed.
+    log = fopen("report.log", "w");
 
+    // Allocate both; 32 bytes should be enough; may be increased in future.
     info->tok  = (char*)malloc(sizeof(char)*32);
     info->word = (char*)malloc(sizeof(char)*32);
-
-    //*result |= (info->tok && info->word) ? 1 : 0;
 
     return (info->tok && info->word) ? 1 : 0;
 }
 
 int intp_free(intp_info *info) {
-    free(info->data);
-    free(info->tok );
-    free(info->word);
+
+    fclose(log);
+
+    // Free if it is not empty.
+    if(strlen(info->data) != 0) free(info->data);
+    if(strlen(info->tok ) != 0) free(info->tok );
+    if(strlen(info->word) != 0) free(info->word);
 }
 
 void intp_string(intp_info *info , char *str) {
     info->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
     if(!info->data) {
-        intp__error("Cannot allocate memory.");
+        _error("Cannot allocate memory.");
     }
 
-    size_t r = (size_t)strcpy(info->data, str);
+    size_t r = (size_t)strcpy(info->data, str); // Copy the content into the buffer.
     if(!r) {
-        intp__error("Cannot read string.");
+        _error("Cannot read string.");
     }
 
-    intp__parse(info);
+    _parse(info);
 }
 
 void intp_file(intp_info *info, char *fn) {
+    // To do: use 'intp_string()' internally.
 
     FILE *file = fopen(fn, "r");
 
@@ -42,20 +65,18 @@ void intp_file(intp_info *info, char *fn) {
     long size = ftell(file);
     rewind(file);
 
-    printf("file size: %ld\n", size);
-
     info->data = (char*)malloc(sizeof(char) * size);
 
     if(!info->data) {
-        intp__error("Cannot allocate memory.");
+        _error("Cannot allocate memory.");
     }
 
     size_t r = fread(info->data, 1, size+1, file);
     if(!r) {
-        intp__error("Cannot read file.");
+        _error("Cannot read file.");
     }
 
     fclose(file);
     strcat(info->data, "\0");
-    intp__parse(info);
+    _parse(info);
 }

@@ -4,28 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-//////////////////////////////
-//----------Logging-----------
-//////////////////////////////
-
-static void intp__warn(char *str) {
-    printf("%s\n", str);
-}
-
-static int intp__error(char *str) {
-    printf("%s\n", str);
-    return -1;
-}
-
-
-//////////////////////////////
-//----------Utilities---------
-//////////////////////////////
-
 #define SYMBOL_COUNT 28
 
-static char intp__lex_symbols[SYMBOL_COUNT] = {
+// Right now only including required sumbols. May add more soon.
+static char _lex_symbols[SYMBOL_COUNT] = {
     '~', '!', '@', '#',
     '%', '^', '&', '*',
     '(', ')', '-', '_',
@@ -35,13 +17,15 @@ static char intp__lex_symbols[SYMBOL_COUNT] = {
     '<', '>', '?', '/'
 };
 
+//----------Utilities---------
+
 static int intp_is_space(char c) {
     return (c == ' ');
 }
 
 static int intp_is_sym(char c) {
     for(int i = 0; i < SYMBOL_COUNT; i++) {
-        if (c == intp__lex_symbols[i]) return 1;
+        if (c == _lex_symbols[i]) return 1;
     }
     return 0;
 }
@@ -77,14 +61,19 @@ typedef struct {
     char *data;
     char *tok;
     char *word;
-    /**<----->*/
+    // To do: add line count, column number and more...
 } intp_info;
 
+//----------Logging-----------
+
+void _warn(char *str);
+int _error(char *str);
+
 //----------Lexer-------------
-int intp__lex(intp_info *info);
+int _lex(intp_info *info);
 
 //----------Parser------------
-void intp__parse(intp_info *info);
+void _parse(intp_info *info);
 
 //----------Main--------------
 int intp_init(intp_info *info);

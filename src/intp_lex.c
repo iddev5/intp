@@ -4,50 +4,63 @@
 //----------Lexer-------------
 //////////////////////////////
 
-void intp__lex_next_ch(intp_info *info) {
+#define OPR_COUNT 6
+
+char *_operators[OPR_COUNT] = {
+    "+", "-", "*", "/", "++", "--"
+};
+
+void _inc(int *n) {
+    n++;
+}
+
+void _next(intp_info *info) {
     *info->data++;
 }
 
+void _send(intp_info *info, int n) {
+    strcpy(info->word, info->tok);
+    for(short i = 0; i < n; i++) {
+        info->tok[i] = '\0';
+    }
+}
 
-int intp__lex_opr(intp_info *info) {
 
-    //strcpy(info->word, "");
+int _lex_opr(intp_info *info) {
 
     int times = 0;
     int type = -1;
 
     do {
         *(info->tok+times) = *info->data;
-        printf("id: %c\t", *info->data);
-        intp__lex_next_ch(info);
-        times++;
+        _next(info);
+        _inc(&times);
 
     } while(intp_is_sym(*info->data));
+
 
     if(strcmp(info->tok, "+")==0) type = op_add;
     else if(strcmp(info->tok, "-")==0) type = op_sub;
     else if(strcmp(info->tok, "++")==0) type = op_inc;
     else if(strcmp(info->tok, "--")==0) type = op_dec;
 
-    //printf("tok: %s\ttimes: %d\t", info->tok, times);
-
-    strcpy(info->word, info->tok);
-
-    for(int i = 0; i <= times; i++) *(info->tok+i) = '\0';
-
-    //printf("just before: %d\n", type);
+   /* for(int i = 0; i < OPR_COUNT; i++) {
+        if(strcmp(info->tok, _operators[i])==0) type = op_add + i;
+    }*/
+    _send(info, times);
 
     return type;
 
 }
 
-int intp__lex_num(intp_info *info) {
+int _lex_num(intp_info *info) {
 
     int times = 0;
 
     if(*info->data == '0') {
         *(info->tok+times) = *info->data;
-        *info->data++; times++;
+        _next(info);
+        _inc(&times);
 
         if(*info->data == 'x' || *info->data == 'X') {
             //*(info->tok+times) = *info->data;
@@ -63,46 +76,34 @@ add_numbers:
     do {
         *(info->tok+times) = *info->data;
 
-        printf("num: %s", info->tok);
-        printf("\tdata: %c", *info->data);
-
-        *info->data++;
-        times++;
-
-        printf("\ttimes: %d\n", times);
+        _next(info);
+        _inc(&times);
 
     } while(intp_is_num(*info->data));
 
-    strcpy(info->word, info->tok);
-
-    for(int i = 0; i <= times; i++) *(info->tok+i) = '\0';
+    _send(info, times);
 
     return num;
 }
 
-int intp__lex_al(intp_info *info) {
+int _lex_al(intp_info *info) {
    int times = 0;
 
    do {
 
         *(info->tok+times) = *info->data;
 
-        printf("id: %s\t", info->tok);
-        printf("data: %c\n", *info->data);
-
-        intp__lex_next_ch(info);
-        times++;
+        _next(info);
+        _inc(&times);
 
     } while(intp_is_id(*info->data));
 
-    strcpy(info->word, info->tok);
-
-    for(int i = 0; i <= times; i++) *(info->tok+i) = '\0';
+    _send(info, times);
 
     return alpha;
 }
 
-int intp__lex(intp_info *info) {
+int _lex(intp_info *info) {
 
     int type = -1;
 
@@ -111,15 +112,15 @@ int intp__lex(intp_info *info) {
     }
 
     if(intp_is_sym(*info->data)) {
-        type = intp__lex_opr(info);
+        type = _lex_opr(info);
     }
 
     if(intp_is_num(*info->data)) {
-        type = intp__lex_num(info);
+        type = _lex_num(info);
     }
 
     if(intp_is_id(*info->data)) {
-        type = intp__lex_al(info);
+        type = _lex_al(info);
     }
 
     return type;
@@ -130,15 +131,15 @@ int intp__lex(intp_info *info) {
 /////////////////////////////////
 /*
 
-char *intp__lex_operators[12] = {
+char *_lex_operators[12] = {
     "+", "-", "*", "/", "^", "%",
     "=", "==","<", ">", "<=",">="
 };
 */
 /*
-int intp__lex_check_exe_sym(intp_info *info) {
-    for(int i = 0; *(intp__lex_symbols+i) != '\0'; i++) {
-        if(*info->data == *(intp__lex_symbols+i)) {
+int _lex_check_exe_sym(intp_info *info) {
+    for(int i = 0; *(_lex_symbols+i) != '\0'; i++) {
+        if(*info->data == *(_lex_symbols+i)) {
             *info->tok = *info->data;
             strcpy(info->word, info->tok);
             *info->data++;
@@ -153,17 +154,17 @@ int intp__lex_check_exe_sym(intp_info *info) {
 */    //int times = 0;
 /*
     for(int i = 0; i < 28; i++) {
-        if(*info->data == *(intp__lex_symbols+i)) {
+        if(*info->data == *(_lex_symbols+i)) {
             *(info->tok+times) = *info->data;
             *info->data++; times++;
             printf("data: %c\tsym: %c\ttok: %s\n",
-                   *info->data, intp__lex_symbols[i], info->tok);
+                   *info->data, _lex_symbols[i], info->tok);
         }
     }
 */
 /*
     for(int i = 0; i < 12; i++) {
-        if(strcmp(info->tok, intp__lex_operators[i])) {
+        if(strcmp(info->tok, _lex_operators[i])) {
             strcpy(info->word, info->tok);
             for(int i = 0; i < times; i++) *(info->tok+times) = '\0';
             return sym;
@@ -174,7 +175,7 @@ int intp__lex_check_exe_sym(intp_info *info) {
 /*
         if(*info->data == '+') {
 
-            intp__lex_next_ch(info); times++;
+            _next(info); times++;
 
             if(*info->data == '+') {
                 printf("first tok: %s\t", info->tok);
@@ -192,7 +193,7 @@ int intp__lex_check_exe_sym(intp_info *info) {
 
         else if(*info->data == '-') {
 
-            intp__lex_next_ch(info); times++;
+            _next(info); times++;
 
             if(*info->data == '-') {
                 printf("first tok: %s\t", info->tok);

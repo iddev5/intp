@@ -4,14 +4,13 @@
 //----------Parser------------
 //////////////////////////////
 
-void intp__parse(intp_info *info) {
+void _parse(intp_info *info) {
 
-    //intp__lex(info);
     int lex_info = -1;
 
     while(1) {
 
-        /*<---------------------->*/
+        /* For Test */
         printf("word: %s\t\ttype:%d\n", info->word, lex_info);
         if(strcmp(info->word, "hi") == 0) {
             printf("output: \"this is a hi\"\n");
@@ -29,8 +28,9 @@ void intp__parse(intp_info *info) {
             printf("output: \"but this is indeed a sup\"\n");
         }
 
+        
         if(*info->data == '\0') break;
-        lex_info = intp__lex(info);
+        lex_info = _lex(info);
 
     }
 
