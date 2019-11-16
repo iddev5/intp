@@ -11,7 +11,7 @@ char *_operators[OPR_COUNT] = {
 };
 
 void _inc(int *n) {
-    n++;
+    (*n)++;
 }
 
 void _next(intp_info *info) {
