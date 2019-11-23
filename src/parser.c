@@ -27,6 +27,7 @@ void _parse(intp_info *info) {
             sds var_name = sdsnew(info->word);
 
             lex_info = _lex(info);
+
             if(strcmp(info->word, "=")==0) {
                 /*
                 while(strcmp(info->word, ";")!=0) {

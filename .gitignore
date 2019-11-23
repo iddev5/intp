@@ -1,4 +1,8 @@
-*.o
-*.depend
-*.layout
-/bin/debug*
+*.intp
+
+/proj/CodeBlocks/bin*
+/proj/CodeBlocks/object*
+
+/proj/CodeLite/Debug*
+/proj/CodeLite/Release*
+/proj/CodeLite/.codelite

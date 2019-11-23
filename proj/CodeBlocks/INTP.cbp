@@ -7,8 +7,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/debug/intp" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../bin/object/debug" />
+				<Option output="bin/debug/intp" prefix_auto="1" extension_auto="1" />
+				<Option object_output="object/debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -16,8 +16,8 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/intp" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../bin/object/release" />
+				<Option output="bin/release/intp" prefix_auto="1" extension_auto="1" />
+				<Option object_output="object/release" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -32,20 +32,25 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../src/intp.c">
+		<Unit filename="../../src/intp.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/intp.h" />
-		<Unit filename="../src/intp_lex.c">
+		<Unit filename="../../src/intp.h" />
+		<Unit filename="../../src/lexer.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/intp_parse.c">
+		<Unit filename="../../src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/main.c">
+		<Unit filename="../../src/parser.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/stb/stb_ds.h" />
+		<Unit filename="../../src/sds/sds.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/sds/sds.h" />
+		<Unit filename="../../src/sds/sdsalloc.h" />
+		<Unit filename="../../src/stb/stb_ds.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

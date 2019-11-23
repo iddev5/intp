@@ -1,0 +1,54 @@
+# depslib dependency file v1.0
+1574252350 source:/home/ayush/Documents/Projects/INTP/INTP/src/intp.c
+	"intp.h"
+
+1574099201 /home/ayush/Documents/Projects/INTP/INTP/src/intp.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	<stdbool.h>
+	"stb/stb_ds.h"
+
+1573993907 /home/ayush/Documents/Projects/INTP/INTP/src/stb/stb_ds.h
+	"stb_ds.h"
+	<stddef.h>
+	<string.h>
+	<stdlib.h>
+	<assert.h>
+	<string.h>
+	<stdio.h>
+	<assert.h>
+
+1574012217 source:/home/ayush/Documents/Projects/INTP/INTP/src/lexer.c
+	"intp.h"
+
+1574515380 source:/home/ayush/Documents/Projects/INTP/INTP/src/main.c
+	<stdio.h>
+	<stdlib.h>
+	"intp.h"
+
+1574530998 source:/home/ayush/Documents/Projects/INTP/INTP/src/parser.c
+	"intp.h"
+	"sds/sds.h"
+
+1574427607 /home/ayush/Documents/Projects/INTP/INTP/src/sds/sds.h
+	<sys/types.h>
+	<stdarg.h>
+	<stdint.h>
+
+1574427607 source:/home/ayush/Documents/Projects/INTP/INTP/src/sds/sds.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+	<assert.h>
+	<limits.h>
+	"sds.h"
+	"sdsalloc.h"
+	<stdio.h>
+	"testhelp.h"
+	"limits.h"
+
+1574427607 /home/ayush/Documents/Projects/INTP/INTP/src/sds/sdsalloc.h
+
