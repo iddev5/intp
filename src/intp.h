@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "stb/stb_ds.h"
+
 #define SYMBOL_COUNT 28
 
 // Right now only including required sumbols. May add more soon.
@@ -57,23 +62,32 @@ enum intp__token_type {
 };
 
 //----------Structs-----------
+struct _dataobject {
+    char *key;
+    void *value;
+    uint32_t scope_number;
+};
+
 typedef struct {
     char *data;
     char *tok;
     char *word;
+
+    uint32_t scope_count;
+
+    struct _dataobject *objs;
     // To do: add line count, column number and more...
 } intp_info;
-
-//----------Logging-----------
-
-void _warn(char *str);
-int _error(char *str);
 
 //----------Lexer-------------
 int _lex(intp_info *info);
 
 //----------Parser------------
 void _parse(intp_info *info);
+
+//----------Data Types--------
+void*intp_get_data(intp_info *info, char *name);
+void intp_set_data(intp_info *info, const char* name, void *value, bool is_constant);
 
 //----------Main--------------
 int intp_init(intp_info *info);

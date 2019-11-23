@@ -1,3 +1,4 @@
+#define STB_DS_IMPLEMENTATION
 #include "intp.h"
 
 //////////////////////////////
@@ -18,6 +19,24 @@ int _error(char *str) {
 }
 
 //////////////////////////////
+//----------Data Types--------
+//////////////////////////////
+
+void *intp_get_data(intp_info *info, char* name) {
+
+    for(int i = 0; i < shlen(info->objs); i++) {
+        if(!strcmp(name, info->objs[i].key)) {
+            return info->objs[i].value;
+        }
+    }
+}
+
+void intp_set_data(intp_info *info, const char* name, void *value, bool is_constant) {
+
+    shput(info->objs, (const char*)name, value);
+}
+
+//////////////////////////////
 //----------Main--------------
 //////////////////////////////
 
@@ -29,12 +48,16 @@ int intp_init(intp_info *info) {
     info->tok  = (char*)malloc(sizeof(char)*32);
     info->word = (char*)malloc(sizeof(char)*32);
 
+    info->objs = NULL;
+
     return (info->tok && info->word) ? 1 : 0;
 }
 
 int intp_free(intp_info *info) {
 
     fclose(log);
+
+    shfree(info->objs);
 
     // Free if it is not empty.
     if(strlen(info->data) != 0) free(info->data);

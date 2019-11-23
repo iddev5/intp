@@ -44,9 +44,6 @@ int _lex_opr(intp_info *info) {
     else if(strcmp(info->tok, "++")==0) type = op_inc;
     else if(strcmp(info->tok, "--")==0) type = op_dec;
 
-   /* for(int i = 0; i < OPR_COUNT; i++) {
-        if(strcmp(info->tok, _operators[i])==0) type = op_add + i;
-    }*/
     _send(info, times);
 
     return type;
@@ -107,7 +104,7 @@ int _lex(intp_info *info) {
 
     int type = -1;
 
-    if(intp_is_space(*info->data)) {
+    if(intp_is_space(*info->data) || *info->data == '\n') {
         do { *info->data++; } while(intp_is_space(*info->data));
     }
 
@@ -125,86 +122,3 @@ int _lex(intp_info *info) {
 
     return type;
 }
-
-/////////////////////////////////
-/////////TEMP////////////////////
-/////////////////////////////////
-/*
-
-char *_lex_operators[12] = {
-    "+", "-", "*", "/", "^", "%",
-    "=", "==","<", ">", "<=",">="
-};
-*/
-/*
-int _lex_check_exe_sym(intp_info *info) {
-    for(int i = 0; *(_lex_symbols+i) != '\0'; i++) {
-        if(*info->data == *(_lex_symbols+i)) {
-            *info->tok = *info->data;
-            strcpy(info->word, info->tok);
-            *info->data++;
-            *info->tok = '\0';
-            return sym;
-        }
-    }
-}
-
-
-
-*/    //int times = 0;
-/*
-    for(int i = 0; i < 28; i++) {
-        if(*info->data == *(_lex_symbols+i)) {
-            *(info->tok+times) = *info->data;
-            *info->data++; times++;
-            printf("data: %c\tsym: %c\ttok: %s\n",
-                   *info->data, _lex_symbols[i], info->tok);
-        }
-    }
-*/
-/*
-    for(int i = 0; i < 12; i++) {
-        if(strcmp(info->tok, _lex_operators[i])) {
-            strcpy(info->word, info->tok);
-            for(int i = 0; i < times; i++) *(info->tok+times) = '\0';
-            return sym;
-        }
-    }
-*/
-
-/*
-        if(*info->data == '+') {
-
-            _next(info); times++;
-
-            if(*info->data == '+') {
-                printf("first tok: %s\t", info->tok);
-                type = op_inc;
-                break;
-
-            }
-            else {
-                printf("first tok: %s\t", info->tok);
-                type = op_add;
-                break;
-
-            }
-        }
-
-        else if(*info->data == '-') {
-
-            _next(info); times++;
-
-            if(*info->data == '-') {
-                printf("first tok: %s\t", info->tok);
-                type = op_dec;
-                break;
-
-            }
-            else {
-                printf("first tok: %s", info->tok);
-                type = op_sub;
-                break;
-
-            }
-        }*/
