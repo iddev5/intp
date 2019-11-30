@@ -1,1 +1,0 @@
-./Release/up_up_src_lexer.c.o ./Release/up_up_src_main.c.o ./Release/up_up_src_intp.c.o ./Release/up_up_src_parser.c.o ./Release/up_up_src_sds_sds.c.o

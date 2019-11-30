@@ -1,8 +1,18 @@
+# INTP scripts
 *.intp
 
-/proj/CodeBlocks/bin*
-/proj/CodeBlocks/object*
+# Executables and Object FIles
+intp
+*.o
 
-/proj/CodeLite/Debug*
-/proj/CodeLite/Release*
-/proj/CodeLite/.codelite
+# Addiditonal files by CodeBlocks IDE
+*.depend
+*.layout
+
+# /proj/CodeBlocks/bin*
+# /proj/CodeBlocks/object*
+# /proj/CodeBlocks/INTP.depend
+# /proj/CodeBlocks/INTP.layout
+
+# /proj/Linux/bin*
+# /proj/Linux/object*
