@@ -19,13 +19,14 @@ static char _lex_symbols[SYMBOL_COUNT] = {
     '+', '=', '{', '}',
     '[', ']', '|', '\\',
     ':', ';', '\"', '\'',
-    '<', '>', '?', '/'
+    '<', ',', '>', '?', '/', 
+	
 };
 
 //----------Utilities---------
 
 static int intp_is_space(char c) {
-    return (c == ' ');
+    return (c == ' ' || c == '\n');
 }
 
 static int intp_is_sym(char c) {
@@ -43,8 +44,12 @@ static int intp_is_num(char c) {
     return (c >= '0' && c <= '9');
 }
 
+static int intp_is_alnum(char c) {
+	return intp_is_alpha(c) || intp_is_num(c); 
+}
+
 static int intp_is_id(char c) {
-    return intp_is_alpha(c) || c == '_';
+    return intp_is_alnum(c) || c == '_';
 }
 
 //----------Enums-------------

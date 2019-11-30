@@ -1,5 +1,6 @@
-# INTP scripts
+# INTP scripts and files
 *.intp
+*.log
 
 # Executables and Object FIles
 intp

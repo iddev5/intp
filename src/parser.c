@@ -7,11 +7,13 @@
 //----------Parser------------
 //////////////////////////////
 
-//#define INTP_DEBUG
+#define INTP_DEBUG 
 
 void _parse(intp_info *info) {
 
     int lex_info = -1;
+	
+	intp_set_data(info, "nl", "\n", false);
 
 
     while(1) {
@@ -29,15 +31,21 @@ void _parse(intp_info *info) {
             lex_info = _lex(info);
 
             if(strcmp(info->word, "=")==0) {
-                /*
-                while(strcmp(info->word, ";")!=0) {
+                
+                sds var_value = sdsempty();
+                
+				int n = 0;
+                do {
                     lex_info = _lex(info);
-                }
-                */
-                // Get the variable value.
-                lex_info = _lex(info);
-                sds var_value = sdsnew(info->word);
-
+					
+                    if(!strcmp(info->word, ";")) break;
+					else if(n != 0) strcat(var_value, " ");
+					
+                    strcat(var_value, info->word);
+					
+					n++;
+                } while(1);
+      
                 intp_set_data(info, sdsnew(var_name), sdsnew(var_value), false);
 
                 sdsfree(var_value);
@@ -47,8 +55,23 @@ void _parse(intp_info *info) {
         }
 
         if(strcmp(info->word, "put")==0) {
-            lex_info = _lex(info);
-            printf("%s", (char*)(intp_get_data(info, info->word)));
+            do {	
+				lex_info = _lex(info);
+				
+				//if(!strcmp(info->word, ";")) break;
+				/*if(!strcmp(info->word, "nl")) { 
+					printf("\n");
+				}*/
+				if(strcmp(info->word, ";")) {
+					printf("%s", (char*)(intp_get_data(info, info->word)));
+					
+					lex_info = _lex(info);
+				
+					if(!strcmp(info->word, ";")) break;
+					else if(!strcmp(info->word, ",")) continue;
+				}
+				
+			} while(1);
         }
 
         if(*info->data == '\0') break;
