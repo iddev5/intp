@@ -66,16 +66,32 @@ int _lex(intp_info *info) {
 	}
 	
 	else if(intp_is_sym(*info->data)) {
-		while(intp_is_sym(*info->data)) {
-			copy;
-		}
-		
-	    if(strcmp(info->tok, "+")==0) type = op_add;
-    	else if(strcmp(info->tok, "-")==0) type = op_sub;
-    	else if(strcmp(info->tok, "++")==0) type = op_inc;
-    	else if(strcmp(info->tok, "--")==0) type = op_dec;
-	}
-	
-	send;
+        
+        // A string
+        if(check('\"') || check('\'')) {
+            int i = 0;
+            do {
+                
+                copy;
+                if(check('\"') || check('\'')) { copy; break; }
+           
+            } while(1);
+            
+        }
+        
+        else { 
+        
+            while(intp_is_sym(*info->data)) { copy; }
+            
+            // To do: A better checking system
+            if(strcmp(info->tok, "+")==0) type = op_add;
+            else if(strcmp(info->tok, "-")==0) type = op_sub;
+            else if(strcmp(info->tok, "++")==0) type = op_inc;
+            else if(strcmp(info->tok, "--")==0) type = op_dec;
+            
+        }	
+    }
+    
+    send;
 	return times;
 }

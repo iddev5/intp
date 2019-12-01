@@ -58,18 +58,12 @@ void _parse(intp_info *info) {
             do {	
 				lex_info = _lex(info);
 				
-				//if(!strcmp(info->word, ";")) break;
-				/*if(!strcmp(info->word, "nl")) { 
-					printf("\n");
-				}*/
-				if(strcmp(info->word, ";")) {
-					printf("%s", (char*)(intp_get_data(info, info->word)));
+				printf("%s", (char*)(intp_get_data(info, info->word)));
 					
-					lex_info = _lex(info);
+				lex_info = _lex(info);
 				
-					if(!strcmp(info->word, ";")) break;
-					else if(!strcmp(info->word, ",")) continue;
-				}
+				if(!strcmp(info->word, ";")) break;
+				else if(!strcmp(info->word, ",")) continue;
 				
 			} while(1);
         }

@@ -10,4 +10,3 @@ indent_size = 4
 
 [*.{c, h}]
 trim_trailing_whitespace = true
-linguist-language = C
