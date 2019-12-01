@@ -9,49 +9,6 @@
 
 #include "stb/stb_ds.h"
 
-#define SYMBOL_COUNT 28
-
-// Right now only including required sumbols. May add more soon.
-static char _lex_symbols[SYMBOL_COUNT] = {
-    '~', '!', '@', '#',
-    '%', '^', '&', '*',
-    '(', ')', '-', '_',
-    '+', '=', '{', '}',
-    '[', ']', '|', '\\',
-    ':', ';', '\"', '\'',
-    '<', ',', '>', '?', '/', 
-	
-};
-
-//----------Utilities---------
-
-static int intp_is_space(char c) {
-    return (c == ' ' || c == '\n');
-}
-
-static int intp_is_sym(char c) {
-    for(int i = 0; i < SYMBOL_COUNT; i++) {
-        if (c == _lex_symbols[i]) return 1;
-    }
-    return 0;
-}
-
-static int intp_is_alpha(char c) {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
-static int intp_is_num(char c) {
-    return (c >= '0' && c <= '9');
-}
-
-static int intp_is_alnum(char c) {
-	return intp_is_alpha(c) || intp_is_num(c); 
-}
-
-static int intp_is_id(char c) {
-    return intp_is_alnum(c) || c == '_';
-}
-
 //----------Enums-------------
 enum intp__token_type {
     hex,
@@ -74,6 +31,8 @@ struct _dataobject {
 };
 
 typedef struct {
+	unsigned int line, col;
+	
     char *data;
     char *tok;
     char *word;
@@ -81,7 +40,6 @@ typedef struct {
     uint32_t scope_count;
 
     struct _dataobject *objs;
-    // To do: add line count, column number and more...
 } intp_info;
 
 //----------Lexer-------------
@@ -90,13 +48,17 @@ int _lex(intp_info *info);
 //----------Parser------------
 void _parse(intp_info *info);
 
+//----------Logging-----------
+void intp_warn(intp_info *info, char *str);
+int intp_error(intp_info *info, char *str);
+
 //----------Data Types--------
 void*intp_get_data(intp_info *info, char *name);
 void intp_set_data(intp_info *info, const char* name, void *value, bool is_constant);
 
 //----------Main--------------
 int intp_init(intp_info *info);
-int intp_free(intp_info *info);
+void intp_free(intp_info *info);
 
 void intp_string(intp_info *info , char *str);
 void intp_file(intp_info *info, char *fn);

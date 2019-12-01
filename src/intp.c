@@ -5,16 +5,14 @@
 //----------Logging-----------
 //////////////////////////////
 
-FILE *log;
+FILE *logfile;
 
-void _warn(char *str) {
-    // To do: time, line number, column number.
-    fprintf(log, "%s\n", str);
+void intp_warn(intp_info *info, char *str) {
+    fprintf(logfile, "Warning: Line %u, Column %u: %s\n", info->line, info->col, str);
 }
 
-int _error(char *str) {
-    // To do: line number and coloured output.
-    printf("%s\n", str);
+int intp_error(intp_info *info, char *str) {
+    printf("Error: Line %u, Column %u: %s\n", info->line, info->col, str);
     return -1;
 }
 
@@ -29,6 +27,7 @@ void *intp_get_data(intp_info *info, char* name) {
             return info->objs[i].value;
         }
     }
+    return (int*)-1;
 }
 
 void intp_set_data(intp_info *info, const char* name, void *value, bool is_constant) {
@@ -42,7 +41,7 @@ void intp_set_data(intp_info *info, const char* name, void *value, bool is_const
 
 int intp_init(intp_info *info) {
     // Open the log file only when the interpreter is initialzed.
-    log = fopen("report.log", "w");
+    logfile = fopen("report.log", "w");
 
     // Allocate both; 32 bytes should be enough; may be increased in future.
     info->tok  = (char*)malloc(sizeof(char)*32);
@@ -53,9 +52,9 @@ int intp_init(intp_info *info) {
     return (info->tok && info->word) ? 1 : 0;
 }
 
-int intp_free(intp_info *info) {
+void intp_free(intp_info *info) {
 
-    fclose(log);
+    fclose(logfile);
 
     shfree(info->objs);
 
@@ -68,21 +67,25 @@ int intp_free(intp_info *info) {
 void intp_string(intp_info *info , char *str) {
     info->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
     if(!info->data) {
-        _error("Cannot allocate memory.");
+        printf("Cannot allocate memory.");
     }
 
     size_t r = (size_t)strcpy(info->data, str); // Copy the content into the buffer.
     if(!r) {
-        _error("Cannot read string.");
+        printf("Cannot read string.");
     }
 
     _parse(info);
 }
 
 void intp_file(intp_info *info, char *fn) {
-    // To do: use 'intp_string()' internally.
 
     FILE *file = fopen(fn, "r");
+    
+    if(feof(file)) {
+        printf("Cannot open file: %s\n", fn);
+        exit(-1);
+    }
 
     fseek(file, 0, SEEK_END);
     long size = ftell(file);
@@ -91,12 +94,14 @@ void intp_file(intp_info *info, char *fn) {
     info->data = (char*)malloc(sizeof(char) * size);
 
     if(!info->data) {
-        _error("Cannot allocate memory.");
+        printf("Cannot allocate memory.\n");
+        exit(-1);
     }
 
     size_t r = fread(info->data, 1, size+1, file);
     if(!r) {
-        _error("Cannot read file.");
+        printf("Cannot read file.\n");
+        exit(-1);
     }
 
     fclose(file);
