@@ -14,23 +14,23 @@ void _parse(intp_info *info) {
     int lex_info = -1;
 	
 	intp_set_data(info, "nl", "\n", false);
-
+	intp_set_data(info, "tab","\t", false);
 
     while(1) {
 
         /* For Test */
         #ifdef INTP_DEBUG
-        printf("token: %s\t\ttype:%d\n", info->word, lex_info);
+        printf("token: %s\t\ttype:%d\n", info->tok, lex_info);
         #endif
 
-        if(strcmp(info->word, "var")==0) {
+        if(strcmp(info->tok, "var")==0) {
             // Get the variable name.
             lex_info = _lex(info);
-            sds var_name = sdsnew(info->word);
+            sds var_name = sdsnew(info->tok);
 
             lex_info = _lex(info);
 
-            if(strcmp(info->word, "=")==0) {
+            if(strcmp(info->tok, "=")==0) {
                 
                 sds var_value = sdsempty();
                 
@@ -38,10 +38,10 @@ void _parse(intp_info *info) {
                 do {
                     lex_info = _lex(info);
 					
-                    if(!strcmp(info->word, ";")) break;
+                    if(!strcmp(info->tok, ";")) break;
 					else if(n != 0) strcat(var_value, " ");
 					
-                    strcat(var_value, info->word);
+                    strcat(var_value, info->tok);
 					
 					n++;
                 } while(1);
@@ -54,16 +54,16 @@ void _parse(intp_info *info) {
 
         }
 
-        if(strcmp(info->word, "put")==0) {
+        if(strcmp(info->tok, "put")==0) {
             do {	
 				lex_info = _lex(info);
 				
-				printf("%s", (char*)(intp_get_data(info, info->word)));
+				printf("%s", (char*)(intp_get_data(info, info->tok)));
 					
 				lex_info = _lex(info);
 				
-				if(!strcmp(info->word, ";")) break;
-				else if(!strcmp(info->word, ",")) continue;
+				if(!strcmp(info->tok, ";")) break;
+				else if(!strcmp(info->tok, ",")) continue;
 				
 			} while(1);
         }

@@ -10,7 +10,7 @@
 #include "stb/stb_ds.h"
 
 //----------Enums-------------
-enum intp__token_type {
+enum _token_type {
     hex,
     bin,
     num,
@@ -35,8 +35,7 @@ typedef struct {
 	
     char *data;
     char *tok;
-    char *word;
-
+    
     uint32_t scope_count;
 
     struct _dataobject *objs;

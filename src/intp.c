@@ -43,13 +43,12 @@ int intp_init(intp_info *info) {
     // Open the log file only when the interpreter is initialzed.
     logfile = fopen("report.log", "w");
 
-    // Allocate both; 32 bytes should be enough; may be increased in future.
+    // Allocate into_info.tok; 32 bytes should be enough; may be increased in future.
     info->tok  = (char*)malloc(sizeof(char)*32);
-    info->word = (char*)malloc(sizeof(char)*32);
 
     info->objs = NULL;
 
-    return (info->tok && info->word) ? 1 : 0;
+    return (info->tok) ? 1 : 0;
 }
 
 void intp_free(intp_info *info) {
@@ -61,7 +60,6 @@ void intp_free(intp_info *info) {
     // Free if it is not empty.
     if(strlen(info->data) != 0) free(info->data);
     if(strlen(info->tok ) != 0) free(info->tok );
-    if(strlen(info->word) != 0) free(info->word);
 }
 
 void intp_string(intp_info *info , char *str) {

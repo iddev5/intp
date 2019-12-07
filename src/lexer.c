@@ -52,18 +52,20 @@ char *_operators[OPR_COUNT] = {
 };
 
 #define next (void)*(info->data++);
-#define send strcpy(info->word, info->tok); \
-    		 for(short i = 0; i < times; i++) { \
-        		info->tok[i] = '\0'; \
-    		 }
+    		 
 #define copy info->tok[times] = *info->data; \
 			 next; \
 			 times++;
 #define check(y) *info->data == y
 
 int _lex(intp_info *info) {
-	int times = 0;
+	unsigned int times = 0;
 	int type = -1;
+
+	unsigned long x =  strlen(info->tok);
+	for(unsigned short i = 0; i < x; i++) { 
+	    info->tok[i] = '\0'; 
+	}
 	
 	while(_is_space(*info->data)) {
         if(*info->data == ' ') { info->col++; }
@@ -85,7 +87,6 @@ int _lex(intp_info *info) {
 		}
 		
 		if(_is_num(*info->data)) {
-			
 			
 			// Check if it is a hexadecimal or binary
 			if(check('0')) {
@@ -135,6 +136,5 @@ int _lex(intp_info *info) {
         }	
     }
     
-    send;
 	return type;
 }
