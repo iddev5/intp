@@ -23,7 +23,7 @@ void _parse(intp_info *info) {
         printf("token: %s\t\ttype:%d\n", info->tok, lex_info);
         #endif
 
-        if(strcmp(info->tok, "var")==0) {
+        if(lex_info == kwd_var) {
             // Get the variable name.
             lex_info = _lex(info);
             sds var_name = sdsnew(info->tok);

@@ -36,8 +36,17 @@ static inline int _is_id(char c) {
 // Operators. Here the order of operators is 
 // important and should be corresponding to
 // enum _token_type
-char *_operators[] = {
+const char *_operators[] = {
     "+", "-", "*", "/", "++", "--"
+};
+
+const char *_keywords[] = {
+	"break", "case", "class", "const", 
+	"continue", "define", "delete", "do", 		
+	"else", "for", "if", "in",     
+	"is", "import", "int", "pass",
+	"real", "string", "return", "switch", 	
+	"var", "void", "while"
 };
 
 #define next (void)*(info->data++);
@@ -72,6 +81,9 @@ int _lex(intp_info *info) {
 			}
 
 			type = ident;
+			for(unsigned int i = 0; i < sizeof(_keywords)/sizeof(char*); i++) {
+				if(!strcmp(info->tok, _keywords[i])) type = 10 + i;
+			}
 			
 		}
 		
@@ -117,15 +129,8 @@ int _lex(intp_info *info) {
             while(_is_sym(*info->data)) { copy; }
 
 			for(unsigned int i = 0; i < sizeof(_operators)/sizeof(char*); i++) {
-				if(!strcmp(info->tok, _operators[i])) type = 5 + i;
+				if(!strcmp(info->tok, _operators[i])) type = 40 + i;
 			}
-            /*
-            // To do: A better checking system
-            if(strcmp(info->tok, "+")==0) type = op_add;
-            else if(strcmp(info->tok, "-")==0) type = op_sub;
-            else if(strcmp(info->tok, "++")==0) type = op_inc;
-            else if(strcmp(info->tok, "--")==0) type = op_dec;
-          	*/  
         }	
     }
     

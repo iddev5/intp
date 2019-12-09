@@ -11,13 +11,16 @@
 
 //----------Enums-------------
 enum _token_type {
-	// Different types of numbers
-    hex,
+	// Different types of numbers [0+i]
+	// 0
+    hex=0,
     bin,
     num,
+    // 2
 
-	// Keywords
-	kwd_break,
+	// Keywords [10+i]
+	// 10
+	kwd_break=10,
 	kwd_case,
 	kwd_class,
 	kwd_const,
@@ -40,18 +43,20 @@ enum _token_type {
 	kwd_var,
 	kwd_void,    
 	kwd_while,
+	// 32
 
-	count_kwd, // Total count of keywords
-	
+	// 33
     ident,     // Any identifier
 
     // Types of operators
-    op_add,
+    // 40
+    op_add=40,
     op_sub,
     op_mul,
     op_div,
     op_inc,
     op_dec
+    // 45
 };
 
 //----------Structs-----------
