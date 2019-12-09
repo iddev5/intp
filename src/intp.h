@@ -11,10 +11,41 @@
 
 //----------Enums-------------
 enum _token_type {
+	// Different types of numbers
     hex,
     bin,
     num,
-    alpha,
+
+	// Keywords
+	kwd_break,
+	kwd_case,
+	kwd_class,
+	kwd_const,
+	kwd_continue,
+	kwd_define,
+	kwd_delete,
+	kwd_do,
+	kwd_else,
+	kwd_for,
+	kwd_if,
+	kwd_in,          
+	kwd_is, 
+	kwd_import,   
+	kwd_int,      
+	kwd_pass,
+	kwd_real, 
+	kwd_string,   
+	kwd_return,   
+	kwd_switch,	
+	kwd_var,
+	kwd_void,    
+	kwd_while,
+
+	count_kwd, // Total count of keywords
+	
+    ident,     // Any identifier
+
+    // Types of operators
     op_add,
     op_sub,
     op_mul,
@@ -24,6 +55,14 @@ enum _token_type {
 };
 
 //----------Structs-----------
+/*
+_dataobject: A flexible struct for storing any variable
+
+Parameters:
+- char *key   : the name of the variable
+- void *value : the value of the variable
+- uint32_t scope_number: the index of scope
+*/
 struct _dataobject {
     char *key;
     void *value;
@@ -45,7 +84,7 @@ typedef struct {
 int _lex(intp_info *info);
 
 //----------Parser------------
-void _parse(intp_info *info);
+void _parse(intp_info *info); // <-- To do: void _parse(intp_info *info, char *dat);
 
 //----------Logging-----------
 void intp_warn(intp_info *info, char *str);

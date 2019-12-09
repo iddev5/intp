@@ -4,58 +4,45 @@
 //----------Lexer-------------
 //////////////////////////////
 
-#define SYMBOL_COUNT 29
-
-// Right now only including required sumbols. May add more soon.
-static char _lex_symbols[SYMBOL_COUNT] = {
-    '~', '!', '@', '#',
-    '%', '^', '&', '*',
-    '(', ')', '-', '_',
-    '+', '=', '{', '}',
-    '[', ']', '|', '\\',
-    ':', ';', '\"', '\'',
-    '<', ',', '>', '?', '/', 
-	
-};
-
-static int _is_space(char c) {
-    return (c == ' ' || c == '\n');
+// Some of these functions are available in standard
+// library, but still I decided to do it myself.
+static inline int _is_space(char c) {
+    return (c == ' ' || c == '\t' || c == '\n');
 }
 
-static int _is_sym(char c) {
-    for(int i = 0; i < SYMBOL_COUNT; i++) {
-        if (c == _lex_symbols[i]) return 1;
-    }
-    return 0;
+static inline int _is_sym(char c) {
+    return (c >= '!' && c <= '/') || 
+    	   (c >= ':' && c <= '@') ||
+    	   (c >= '[' && c <= '`') ||
+    	   (c >= '{' && c <= '~');
 }
 
-static int _is_alpha(char c) {
+static inline int _is_alpha(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-static int _is_num(char c) {
+static inline int _is_num(char c) {
     return (c >= '0' && c <= '9');
 }
 
-static int _is_alnum(char c) {
+static inline int _is_alnum(char c) {
 	return _is_alpha(c) || _is_num(c); 
 }
 
-static int _is_id(char c) {
+static inline int _is_id(char c) {
     return _is_alnum(c) || c == '_';
 }
 
-#define OPR_COUNT 6
-
-char *_operators[OPR_COUNT] = {
+// Operators. Here the order of operators is 
+// important and should be corresponding to
+// enum _token_type
+char *_operators[] = {
     "+", "-", "*", "/", "++", "--"
 };
 
 #define next (void)*(info->data++);
     		 
-#define copy info->tok[times] = *info->data; \
-			 next; \
-			 times++;
+#define copy info->tok[times] = *info->data; next;  times++;
 #define check(y) *info->data == y
 
 int _lex(intp_info *info) {
@@ -83,6 +70,8 @@ int _lex(intp_info *info) {
 				  check('_')) {
 				copy;
 			}
+
+			type = ident;
 			
 		}
 		
@@ -126,13 +115,17 @@ int _lex(intp_info *info) {
         else { 
         
             while(_is_sym(*info->data)) { copy; }
-            
+
+			for(unsigned int i = 0; i < sizeof(_operators)/sizeof(char*); i++) {
+				if(!strcmp(info->tok, _operators[i])) type = 5 + i;
+			}
+            /*
             // To do: A better checking system
             if(strcmp(info->tok, "+")==0) type = op_add;
             else if(strcmp(info->tok, "-")==0) type = op_sub;
             else if(strcmp(info->tok, "++")==0) type = op_inc;
             else if(strcmp(info->tok, "--")==0) type = op_dec;
-            
+          	*/  
         }	
     }
     
