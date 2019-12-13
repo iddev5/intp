@@ -9,9 +9,9 @@
 
 //#define INTP_DEBUG 
 
-#define match(x) (strcmp(info->tok, x)==0)
+#define match(x) (strcmp(info->buf->tok, x)==0)
 
-#define lex()   _lex(info);
+#define lex()   _lex(info->buf);
 
 void *eval(intp_info *info) {
     int i;
@@ -19,7 +19,7 @@ void *eval(intp_info *info) {
 
     if(i == string) {
             
-        sds ret = sdsnew(info->tok);
+        sds ret = sdsnew(info->buf->tok);
 
         i = lex();
         switch(i) {
@@ -27,23 +27,23 @@ void *eval(intp_info *info) {
                 i = lex();
                 switch(i) {
                     case string: 
-                        ret = sdscat(ret, info->tok);
+                        ret = sdscat(ret, info->buf->tok);
                     break;
                     case semicol:
-                        intp_error(info, "Expected a string before \';\'");
+                        intp_error(info->buf, "Expected a string before \';\'");
                     break;
                 }
             break;
                 
             case op_sub: 
-                intp_error(info, "Not implemented yet");
+                intp_error(info->buf, "Not implemented yet");
             break;
         }
         return ret;
     }
 
         else if (i == semicol) {
-            intp_error(info, "Expected an expression before \';\'");
+            intp_error(info->buf, "Expected an expression before \';\'");
         }
 
     return -1;
@@ -52,16 +52,13 @@ void *eval(intp_info *info) {
 void _var_stmt(intp_info *info) {
     // Get the variable name.
     int i = lex();
-    sds var_name = sdsnew(info->tok);
+    sds var_name = sdsnew(info->buf->tok);
 
     i = lex();
 
-    if(strcmp(info->tok, "=")==0){
-
+    if(strcmp(info->buf->tok, "=")==0){
         void *x = eval(info);
         intp_set_data(info, sdsnew(var_name), sdsnew(x), false);
-
-        sdsfree(var_value);
     }
     sdsfree(var_name);
 }
@@ -71,7 +68,7 @@ void _stmt(intp_info *info) {
         do {	
 			lex();
 				
-			printf("%s", (char*)(intp_get_data(info, info->tok)));
+			printf("%s", (char*)(intp_get_data(info, info->buf->tok)));
 					
 			lex();
 				
@@ -94,7 +91,7 @@ void _parse(intp_info *info) {
 
         /* For Test */
         #ifdef INTP_DEBUG
-            printf("token: %s\t\ttype:%d\n", info->tok, token);
+            printf("token: %s\t\ttype:%d\n", info->buf->tok, token);
         #endif
 
         switch(token) {
@@ -102,7 +99,7 @@ void _parse(intp_info *info) {
             default:      _stmt(info); break;
         }
         
-        if(*info->data == '\0') break;
+        if(*info->buf->data == '\0') break;
         token = lex();
 
     }

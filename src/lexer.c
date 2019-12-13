@@ -49,51 +49,51 @@ const char *_keywords[] = {
 	"var", "void", "while"
 };
 
-#define next (void)*(info->data++);
+#define next (void)*(buf->data++);
     		 
-#define copy info->tok[times] = *info->data; next;  times++;
-#define check(y) *info->data == y
+#define copy buf->tok[times] = *buf->data; next;  times++;
+#define check(y) *buf->data == y
 
-int _lex(intp_info *info) {
+int _lex(intp_src_buf *buf) {
 	unsigned int times = 0;
 	int type = -1;
 
-	unsigned long x =  strlen(info->tok);
+	unsigned long x =  strlen(buf->tok);
 	for(unsigned short i = 0; i < x; i++) { 
-	    info->tok[i] = '\0'; 
+	    buf->tok[i] = '\0'; 
 	}
 	
-	while(_is_space(*info->data)) {
-        if(*info->data == ' ') { info->col++; }
-        else if(*info->data == '\n') { info->line++; }
+	while(_is_space(*buf->data)) {
+        if(*buf->data == ' ') { buf->col++; }
+        else if(*buf->data == '\n') { buf->line++; }
 		next;	  
 	}
 		  
-	if(_is_id(*info->data)) {
+	if(_is_id(*buf->data)) {
 		// Check if the first character is an alphabet or underscore
 		// If it is, then the token can have numbers too i.e. identifier
-		if(_is_alpha(*info->data) || check('_')) {
+		if(_is_alpha(*buf->data) || check('_')) {
 			
-			while(_is_alpha(*info->data) || 
-				  _is_num(*info->data) || 
+			while(_is_alpha(*buf->data) || 
+				  _is_num(*buf->data) || 
 				  check('_')) {
 				copy;
 			}
 
 			type = ident;
 			for(unsigned int i = 0; i < sizeof(_keywords)/sizeof(char*); i++) {
-				if(!strcmp(info->tok, _keywords[i])) type = 10 + i;
+				if(!strcmp(buf->tok, _keywords[i])) type = 10 + i;
 			}
 			
 		}
 		
-		if(_is_num(*info->data)) {
+		if(_is_num(*buf->data)) {
 			
 			// Check if it is a hexadecimal or binary
 			if(check('0')) {
 				next;
 				
-				switch(*info->data) {
+				switch(*buf->data) {
 					case 'x': case 'X': type = hex; 		// Hexadecimal
 					case 'b': case 'B': type = bin;			// Binary
 					default: type = -1; 
@@ -104,13 +104,13 @@ int _lex(intp_info *info) {
 			}
 			
 			// Copy all other numbers
-			while(_is_num(*info->data)) {
+			while(_is_num(*buf->data)) {
 				copy;
 			}
 		}
 	}
 	
-	else if(_is_sym(*info->data)) {
+	else if(_is_sym(*buf->data)) {
         
         // A string
         if(check('\"') || check('\'')) {
@@ -127,10 +127,10 @@ int _lex(intp_info *info) {
         
         else { 
         
-            while(_is_sym(*info->data)) { copy; }
+            while(_is_sym(*buf->data)) { copy; }
 
 			for(unsigned int i = 0; i < sizeof(_operators)/sizeof(char*); i++) {
-				if(!strcmp(info->tok, _operators[i])) type = 40 + i;
+				if(!strcmp(buf->tok, _operators[i])) type = 40 + i;
 			}
         }	
     }

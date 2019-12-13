@@ -7,12 +7,12 @@
 
 FILE *logfile;
 
-void intp_warn(intp_info *info, char *str) {
-    fprintf(logfile, "Warning: Line %u, Column %u: %s\n", info->line, info->col, str);
+void intp_warn(intp_src_buf *buf, char *str) {
+    fprintf(logfile, "Warning: Line %u, Column %u: %s\n", buf->line, buf->col, str);
 }
 
-int intp_error(intp_info *info, char *str) {
-    printf("Error: Line %u, Column %u: %s\n", info->line, info->col, str);
+int intp_error(intp_src_buf *buf, char *str) {
+    printf("Error: Line %u, Column %u: %s\n", buf->line, buf->col, str);
     exit(-1);
 }
 
@@ -43,12 +43,13 @@ int intp_init(intp_info *info) {
     // Open the log file only when the interpreter is initialzed.
     logfile = fopen("report.log", "w");
 
-    // Allocate into_info.tok; 32 bytes should be enough; may be increased in future.
-    info->tok  = (char*)malloc(sizeof(char)*32);
-
     info->objs = NULL;
+    info->buf  = malloc(sizeof(intp_src_buf));
 
-    return (info->tok) ? 1 : 0;
+    // Allocate into_info.tok; 32 bytes should be enough; may be increased in future.
+    info->buf->tok  = (char*)malloc(sizeof(char)*32);
+
+    return (info->buf->tok) ? 1 : 0;
 }
 
 void intp_free(intp_info *info) {
@@ -58,17 +59,17 @@ void intp_free(intp_info *info) {
     shfree(info->objs);
 
     // Free if it is not empty.
-    if(strlen(info->data) != 0) free(info->data);
-    if(strlen(info->tok ) != 0) free(info->tok );
+    if(strlen(info->buf->data) != 0) free(info->buf->data);
+    if(strlen(info->buf->tok ) != 0) free(info->buf->tok );
 }
 
 void intp_string(intp_info *info , char *str) {
-    info->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
-    if(!info->data) {
+    info->buf->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
+    if(!info->buf->data) {
         printf("Cannot allocate memory.");
     }
 
-    size_t r = (size_t)strcpy(info->data, str); // Copy the content into the buffer.
+    size_t r = (size_t)strcpy(info->buf->data, str); // Copy the content into the buffer.
     if(!r) {
         printf("Cannot read string.");
     }
@@ -89,20 +90,20 @@ void intp_file(intp_info *info, char *fn) {
     long size = ftell(file);
     rewind(file);
 
-    info->data = (char*)malloc(sizeof(char) * size);
+    info->buf->data = (char*)malloc(sizeof(char) * size);
 
-    if(!info->data) {
+    if(!info->buf->data) {
         printf("Cannot allocate memory.\n");
         exit(-1);
     }
 
-    size_t r = fread(info->data, 1, size+1, file);
+    size_t r = fread(info->buf->data, 1, size+1, file);
     if(!r) {
         printf("Cannot read file.\n");
         exit(-1);
     }
 
     fclose(file);
-    strcat(info->data, "\0");
+    strcat(info->buf->data, " \0");
     _parse(info);
 }

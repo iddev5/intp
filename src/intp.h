@@ -9,6 +9,8 @@
 
 #include "stb/stb_ds.h"
 
+#define class typedef struct
+
 //----------Enums-------------
 enum _token_type {
 	// Different types of numbers [0+i]
@@ -72,32 +74,35 @@ Parameters:
 - void *value : the value of the variable
 - uint32_t scope_number: the index of scope
 */
-struct _dataobject {
+class {
     char *key;
     void *value;
     uint32_t scope_number;
-};
+} _dataobject;
 
-typedef struct {
+class {
 	unsigned int line, col;
 	
     char *data;
     char *tok;
-    
-    uint32_t scope_count;
+} intp_src_buf;
 
-    struct _dataobject *objs;
+class {
+	intp_src_buf *buf;
+    uint32_t scope_count;
+    _dataobject *objs;
+
 } intp_info;
 
 //----------Lexer-------------
-int _lex(intp_info *info);
+int _lex(intp_src_buf *buf);
 
 //----------Parser------------
-void _parse(intp_info *info); // <-- To do: void _parse(intp_info *info, char *dat);
+void _parse(intp_info *info);
 
 //----------Logging-----------
-void intp_warn(intp_info *info, char *str);
-int intp_error(intp_info *info, char *str);
+void intp_warn(intp_src_buf *buf, char *str);
+int intp_error(intp_src_buf *buf, char *str);
 
 //----------Data Types--------
 void*intp_get_data(intp_info *info, char *name);
