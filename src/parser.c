@@ -7,11 +7,85 @@
 //----------Parser------------
 //////////////////////////////
 
-#define INTP_DEBUG 
+//#define INTP_DEBUG 
+
+#define match(x) (strcmp(info->tok, x)==0)
+
+#define lex()   _lex(info);
+
+void *eval(intp_info *info) {
+    int i;
+    i = lex();
+
+    if(i == string) {
+            
+        sds ret = sdsnew(info->tok);
+
+        i = lex();
+        switch(i) {
+            case op_add: 
+                i = lex();
+                switch(i) {
+                    case string: 
+                        ret = sdscat(ret, info->tok);
+                    break;
+                    case semicol:
+                        intp_error(info, "Expected a string before \';\'");
+                    break;
+                }
+            break;
+                
+            case op_sub: 
+                intp_error(info, "Not implemented yet");
+            break;
+        }
+        return ret;
+    }
+
+        else if (i == semicol) {
+            intp_error(info, "Expected an expression before \';\'");
+        }
+
+    return -1;
+}
+
+void _var_stmt(intp_info *info) {
+    // Get the variable name.
+    int i = lex();
+    sds var_name = sdsnew(info->tok);
+
+    i = lex();
+
+    if(strcmp(info->tok, "=")==0){
+
+        void *x = eval(info);
+        intp_set_data(info, sdsnew(var_name), sdsnew(x), false);
+
+        sdsfree(var_value);
+    }
+    sdsfree(var_name);
+}
+
+void _stmt(intp_info *info) {
+    if(match("put")) {
+        do {	
+			lex();
+				
+			printf("%s", (char*)(intp_get_data(info, info->tok)));
+					
+			lex();
+				
+			if(match(";")) break;
+			else if(match(",")) continue;
+				
+		} while(1);
+    }
+
+}
 
 void _parse(intp_info *info) {
 
-    int lex_info = -1;
+    int token = -1;
 	
 	intp_set_data(info, "nl", "\n", false);
 	intp_set_data(info, "tab","\t", false);
@@ -20,56 +94,16 @@ void _parse(intp_info *info) {
 
         /* For Test */
         #ifdef INTP_DEBUG
-        printf("token: %s\t\ttype:%d\n", info->tok, lex_info);
+            printf("token: %s\t\ttype:%d\n", info->tok, token);
         #endif
 
-        if(lex_info == kwd_var) {
-            // Get the variable name.
-            lex_info = _lex(info);
-            sds var_name = sdsnew(info->tok);
-
-            lex_info = _lex(info);
-
-            if(strcmp(info->tok, "=")==0) {
-                
-                sds var_value = sdsempty();
-                
-				int n = 0;
-                do {
-                    lex_info = _lex(info);
-					
-                    if(!strcmp(info->tok, ";")) break;
-					else if(n != 0) strcat(var_value, " ");
-					
-                    strcat(var_value, info->tok);
-					
-					n++;
-                } while(1);
-      
-                intp_set_data(info, sdsnew(var_name), sdsnew(var_value), false);
-
-                sdsfree(var_value);
-            }
-            sdsfree(var_name);
-
+        switch(token) {
+            case kwd_var: _var_stmt(info); break;
+            default:      _stmt(info); break;
         }
-
-        if(strcmp(info->tok, "put")==0) {
-            do {	
-				lex_info = _lex(info);
-				
-				printf("%s", (char*)(intp_get_data(info, info->tok)));
-					
-				lex_info = _lex(info);
-				
-				if(!strcmp(info->tok, ";")) break;
-				else if(!strcmp(info->tok, ",")) continue;
-				
-			} while(1);
-        }
-
+        
         if(*info->data == '\0') break;
-        lex_info = _lex(info);
+        token = lex();
 
     }
 

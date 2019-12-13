@@ -47,6 +47,8 @@ enum _token_type {
 
 	// 33
     ident,     // Any identifier
+	string,
+	// 34
 
     // Types of operators
     // 40
@@ -55,8 +57,10 @@ enum _token_type {
     op_mul,
     op_div,
     op_inc,
-    op_dec
+    op_dec,
     // 45
+
+	semicol=70
 };
 
 //----------Structs-----------

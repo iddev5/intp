@@ -13,7 +13,7 @@ void intp_warn(intp_info *info, char *str) {
 
 int intp_error(intp_info *info, char *str) {
     printf("Error: Line %u, Column %u: %s\n", info->line, info->col, str);
-    return -1;
+    exit(-1);
 }
 
 //////////////////////////////

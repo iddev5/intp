@@ -121,7 +121,8 @@ int _lex(intp_info *info) {
                 if(check('\"') || check('\'')) { copy; break; }
            
             } while(1);
-            
+			
+            type = string;
         }
         
         else { 
