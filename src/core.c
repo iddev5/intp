@@ -47,7 +47,9 @@ int intp_init(intp_info *info) {
     info->buf  = malloc(sizeof(intp_src_buf));
 
     // Allocate into_info.tok; 32 bytes should be enough; may be increased in future.
-    info->buf->tok  = (char*)malloc(sizeof(char)*32);
+    //info->buf->tok  = (char*)malloc(sizeof(char)*32);
+    info->buf->tok  = sdsempty();
+    info->buf->data = sdsempty();
 
     return (info->buf->tok) ? 1 : 0;
 }
@@ -64,17 +66,19 @@ void intp_free(intp_info *info) {
 }
 
 void intp_string(intp_info *info , char *str) {
-    info->buf->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
+    // To do: use sds
+    /*info->buf->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
     if(!info->buf->data) {
         printf("Cannot allocate memory.");
-    }
-
-    size_t r = (size_t)strcpy(info->buf->data, str); // Copy the content into the buffer.
+    }*/
+    
+    // Copy the content into the buffer.
+    size_t r = (size_t)sdscpy(info->buf->data, str); 
     if(!r) {
         printf("Cannot read string.");
     }
 
-    _parse(info);
+    intp_parse(info);
 }
 
 void intp_file(intp_info *info, char *fn) {
@@ -90,14 +94,15 @@ void intp_file(intp_info *info, char *fn) {
     long size = ftell(file);
     rewind(file);
 
+    // To do: Use sds
     info->buf->data = (char*)malloc(sizeof(char) * size);
-
     if(!info->buf->data) {
         printf("Cannot allocate memory.\n");
         exit(-1);
     }
 
-    size_t r = fread(info->buf->data, 1, size+1, file);
+    // Read the file content and copy to buffer
+    size_t r = fread(info->buf->data, 1, size+1, file); 
     if(!r) {
         printf("Cannot read file.\n");
         exit(-1);
@@ -105,5 +110,5 @@ void intp_file(intp_info *info, char *fn) {
 
     fclose(file);
     strcat(info->buf->data, " \0");
-    _parse(info);
+    intp_parse(info);
 }

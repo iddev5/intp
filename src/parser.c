@@ -1,8 +1,5 @@
 #include "intp.h"
 
-// Not sure whether to use throughout rest of the source code.
-#include "sds/sds.h"
-
 //////////////////////////////
 //----------Parser------------
 //////////////////////////////
@@ -11,9 +8,9 @@
 
 #define match(x) (strcmp(info->buf->tok, x)==0)
 
-#define lex()   _lex(info->buf);
+#define lex()   intp_lex(info->buf);
 
-void *eval(intp_info *info) {
+void *intp_eval(intp_info *info) {
     int i;
     i = lex();
 
@@ -49,7 +46,7 @@ void *eval(intp_info *info) {
     return -1;
 }
 
-void _var_stmt(intp_info *info) {
+void var_stmt(intp_info *info) {
     // Get the variable name.
     int i = lex();
     sds var_name = sdsnew(info->buf->tok);
@@ -57,13 +54,13 @@ void _var_stmt(intp_info *info) {
     i = lex();
 
     if(strcmp(info->buf->tok, "=")==0){
-        void *x = eval(info);
+        void *x = intp_eval(info);
         intp_set_data(info, sdsnew(var_name), sdsnew(x), false);
     }
     sdsfree(var_name);
 }
 
-void _stmt(intp_info *info) {
+void stmt(intp_info *info) {
     if(match("put")) {
         do {	
 			lex();
@@ -80,7 +77,7 @@ void _stmt(intp_info *info) {
 
 }
 
-void _parse(intp_info *info) {
+void intp_parse(intp_info *info) {
 
     int token = -1;
 	
@@ -95,8 +92,8 @@ void _parse(intp_info *info) {
         #endif
 
         switch(token) {
-            case kwd_var: _var_stmt(info); break;
-            default:      _stmt(info); break;
+            case kwd_var: var_stmt(info); break;
+            default:      stmt(info); break;
         }
         
         if(*info->buf->data == '\0') break;

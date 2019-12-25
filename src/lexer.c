@@ -54,7 +54,7 @@ const char *_keywords[] = {
 #define copy buf->tok[times] = *buf->data; next;  times++;
 #define check(y) *buf->data == y
 
-int _lex(intp_src_buf *buf) {
+int intp_lex(intp_src_buf *buf) {
 	unsigned int times = 0;
 	int type = -1;
 
@@ -115,11 +115,9 @@ int _lex(intp_src_buf *buf) {
         // A string
         if(check('\"') || check('\'')) {
             do {
-                
                 copy;
-                // If found a ' or ", copy again and break
+                // If found ' or ", copy again and break
                 if(check('\"') || check('\'')) { copy; break; }
-           
             } while(1);
 			
             type = string;
@@ -129,6 +127,7 @@ int _lex(intp_src_buf *buf) {
         
             while(_is_sym(*buf->data)) { copy; }
 
+			// Find the id of the operator
 			for(unsigned int i = 0; i < sizeof(_operators)/sizeof(char*); i++) {
 				if(!strcmp(buf->tok, _operators[i])) type = 40 + i;
 			}

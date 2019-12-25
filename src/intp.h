@@ -8,6 +8,7 @@
 #include <stdbool.h>
 
 #include "stb/stb_ds.h"
+#include "sds/sds.h"
 
 #define class typedef struct
 
@@ -66,39 +67,32 @@ enum _token_type {
 };
 
 //----------Structs-----------
-/*
-_dataobject: A flexible struct for storing any variable
-
-Parameters:
-- char *key   : the name of the variable
-- void *value : the value of the variable
-- uint32_t scope_number: the index of scope
-*/
 class {
     char *key;
     void *value;
     uint32_t scope_number;
-} _dataobject;
+} intp_dataobject;
 
 class {
 	unsigned int line, col;
 	
-    char *data;
-    char *tok;
+    sds data;
+    sds tok;
 } intp_src_buf;
 
 class {
 	intp_src_buf *buf;
     uint32_t scope_count;
-    _dataobject *objs;
+    intp_dataobject *objs;
 
 } intp_info;
 
 //----------Lexer-------------
-int _lex(intp_src_buf *buf);
+int intp_lex(intp_src_buf *buf);
 
 //----------Parser------------
-void _parse(intp_info *info);
+void*intp_eval(intp_info *info);
+void intp_parse(intp_info *info);
 
 //----------Logging-----------
 void intp_warn(intp_src_buf *buf, char *str);
