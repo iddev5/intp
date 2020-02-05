@@ -6,31 +6,23 @@
 
 // Some of these functions are available in standard
 // library, but still I decided to do it myself.
-static inline int _is_space(char c) {
+static inline int is_whitespace(char c) {
     return (c == ' ' || c == '\t' || c == '\n');
 }
 
-static inline int _is_sym(char c) {
+static inline int is_sym(char c) {
     return (c >= '!' && c <= '/') || 
     	   (c >= ':' && c <= '@') ||
     	   (c >= '[' && c <= '`') ||
     	   (c >= '{' && c <= '~');
 }
 
-static inline int _is_alpha(char c) {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+static inline int is_id(char c) {
+    return isalnum(c) || c == '_';
 }
 
-static inline int _is_num(char c) {
-    return (c >= '0' && c <= '9');
-}
-
-static inline int _is_alnum(char c) {
-	return _is_alpha(c) || _is_num(c); 
-}
-
-static inline int _is_id(char c) {
-    return _is_alnum(c) || c == '_';
+static inline int is_bin(char c) {
+	return (c == '0') || (c == '1');
 }
 
 // Operators. Here the order of operators is 
@@ -49,90 +41,106 @@ const char *_keywords[] = {
 	"var", "void", "while"
 };
 
-#define next (void)*(buf->data++);
-    		 
-#define copy buf->tok[times] = *buf->data; next;  times++;
+unsigned int tok_capacity = 19;
+  		 
+#define copy \
+	if(times >= tok_capacity) { \
+		tok_capacity += 4; \
+		buf->tok = realloc(buf->tok, tok_capacity); \
+	} \
+	buf->tok[times++] = *buf->data++; \
+	buf->col++;
+	
 #define check(y) *buf->data == y
 
 int intp_lex(intp_src_buf *buf) {
 	unsigned int times = 0;
-	int type = -1;
+	buf->type = -1;
 
 	unsigned long x =  strlen(buf->tok);
 	for(unsigned short i = 0; i < x; i++) { 
 	    buf->tok[i] = '\0'; 
 	}
 	
-	while(_is_space(*buf->data)) {
+	while(is_whitespace(*buf->data)) {
         if(*buf->data == ' ') { buf->col++; }
         else if(*buf->data == '\n') { buf->line++; }
-		next;	  
+		(void)*buf->data++;	  
 	}
 		  
-	if(_is_id(*buf->data)) {
-		// Check if the first character is an alphabet or underscore
-		// If it is, then the token can have numbers too i.e. identifier
-		if(_is_alpha(*buf->data) || check('_')) {
-			
-			while(_is_alpha(*buf->data) || 
-				  _is_num(*buf->data) || 
-				  check('_')) {
-				copy;
-			}
+	if(is_id(*buf->data)) {
+		/* Check if the first character is an alphabet or underscore
+		 * If it is, then the token can have numbers too i.e. identifier
+		 */
+		if(isalpha(*buf->data) || check('_')) {
+			do { copy; }
+			while(isalnum(*buf->data) || check('_'));
 
-			type = ident;
-			for(unsigned int i = 0; i < sizeof(_keywords)/sizeof(char*); i++) {
-				if(!strcmp(buf->tok, _keywords[i])) type = 10 + i;
-			}
-			
+			buf->type = ident;
 		}
 		
-		if(_is_num(*buf->data)) {
-			
-			// Check if it is a hexadecimal or binary
+		if(isdigit(*buf->data)) {
+			/* Check if it is a hexadecimal or binary */
 			if(check('0')) {
-				next;
+				(void)*buf->data++; buf->col++; 
 				
 				switch(*buf->data) {
-					case 'x': case 'X': type = hex; 		// Hexadecimal
-					case 'b': case 'B': type = bin;			// Binary
-					default: type = -1; 
+					case 'x': case 'X':	buf->type = hex; break; /* Hexadecimal   */
+					case 'b': case 'B': buf->type = bin; break; /* Binary        */
+					default: goto _num; break;             /* Other numbers */
 				}
 			
-				// Copy twice in order to copy both '0' and 'x' or 'b'
+				/* Copy twice in order to copy both '0' and 'x' or 'b' */
 				copy; copy;
+
+				while(!is_whitespace(*buf->data)) {
+					/* If hexadecimal or binary, just copy everything 
+					 * if its a valid character. 
+					 */
+					if((buf->type == hex && isxdigit(*buf->data)) ||
+					   (buf->type == bin && is_bin(*buf->data))) { copy; }
+					else {
+						/* It is neither hex nor bin nor any number.
+						 * It is something weird.
+						 */
+						buf->type = -1; 
+						do {
+							copy;
+						} while(!is_whitespace(*buf->data));
+						break;
+					}
+				}	
 			}
-			
-			// Copy all other numbers
-			while(_is_num(*buf->data)) {
-				copy;
+			else {
+			_num:
+				buf->type = num;
+				/* Copy all other numbers */
+				while(isdigit(*buf->data)) {
+					copy;
+				}
 			}
 		}
 	}
 	
-	else if(_is_sym(*buf->data)) {
-        
-        // A string
+	else if(is_sym(*buf->data)) {
+        /* A string */
         if(check('\"') || check('\'')) {
             do {
                 copy;
-                // If found ' or ", copy again and break
+                /* If found ' or ", copy again and break */
                 if(check('\"') || check('\'')) { copy; break; }
             } while(1);
 			
-            type = string;
+            buf->type = string;
         }
         
-        else { 
-        
-            while(_is_sym(*buf->data)) { copy; }
-
-			// Find the id of the operator
-			for(unsigned int i = 0; i < sizeof(_operators)/sizeof(char*); i++) {
-				if(!strcmp(buf->tok, _operators[i])) type = 40 + i;
-			}
-        }	
+        else {
+        	/* Presently it only supports singl-char operator tokens */ 
+			copy; 
+			buf->type = operator;
+		}
     }
-    
-	return type;
+
+	/* There is a function but still return anyway */
+    return buf->type;
 }

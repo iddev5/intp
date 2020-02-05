@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #include "stb/stb_ds.h"
 #include "sds/sds.h"
@@ -53,6 +54,8 @@ enum _token_type {
 	string,
 	// 34
 
+	operator,
+
     // Types of operators
     // 40
     op_add=40,
@@ -75,9 +78,8 @@ class {
 
 class {
 	unsigned int line, col;
-	
-    sds data;
-    sds tok;
+    char *data, *tok;
+	int type;
 } intp_src_buf;
 
 class {

@@ -47,11 +47,12 @@ int intp_init(intp_info *info) {
     info->buf  = malloc(sizeof(intp_src_buf));
 
     // Allocate into_info.tok; 32 bytes should be enough; may be increased in future.
-    //info->buf->tok  = (char*)malloc(sizeof(char)*32);
-    info->buf->tok  = sdsempty();
-    info->buf->data = sdsempty();
+    info->buf->tok  = (char*)malloc(sizeof(char)*19);
+     
+    //info->buf->tok  = sdsempty();
+    //info->buf->data = sdsempty();
 
-    return (info->buf->tok) ? 1 : 0;
+    return 1;
 }
 
 void intp_free(intp_info *info) {
@@ -72,8 +73,10 @@ void intp_string(intp_info *info , char *str) {
         printf("Cannot allocate memory.");
     }*/
     
+    info->buf->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
+    
     // Copy the content into the buffer.
-    size_t r = (size_t)sdscpy(info->buf->data, str); 
+    size_t r = (size_t)strcpy(info->buf->data, str); 
     if(!r) {
         printf("Cannot read string.");
     }
