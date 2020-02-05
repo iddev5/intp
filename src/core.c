@@ -1,9 +1,9 @@
 #define STB_DS_IMPLEMENTATION
 #include "intp.h"
 
-//////////////////////////////
-//----------Logging-----------
-//////////////////////////////
+/*
+ *----------Logging-----------
+ */
 
 FILE *logfile;
 
@@ -16,9 +16,9 @@ int intp_error(intp_src_buf *buf, char *str) {
     exit(-1);
 }
 
-//////////////////////////////
-//----------Data Types--------
-//////////////////////////////
+/*
+ *----------Data Types--------
+ */
 
 void *intp_get_data(intp_info *info, char* name) {
 
@@ -35,22 +35,19 @@ void intp_set_data(intp_info *info, const char* name, void *value, bool is_const
     shput(info->objs, (const char*)name, value);
 }
 
-//////////////////////////////
-//----------Main--------------
-//////////////////////////////
+/*
+ *----------Main--------------
+ */
 
 int intp_init(intp_info *info) {
-    // Open the log file only when the interpreter is initialzed.
+    /* Open the log file only when the interpreter is initialzed. */
     logfile = fopen("report.log", "w");
 
     info->objs = NULL;
     info->buf  = malloc(sizeof(intp_src_buf));
 
-    // Allocate into_info.tok; 32 bytes should be enough; may be increased in future.
+    /* Initial allocation */
     info->buf->tok  = (char*)malloc(sizeof(char)*19);
-     
-    //info->buf->tok  = sdsempty();
-    //info->buf->data = sdsempty();
 
     return 1;
 }
@@ -67,18 +64,18 @@ void intp_free(intp_info *info) {
 }
 
 void intp_string(intp_info *info , char *str) {
-    // To do: use sds
-    /*info->buf->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
-    if(!info->buf->data) {
-        printf("Cannot allocate memory.");
-    }*/
     
     info->buf->data = (char*)malloc(sizeof(char) * (strlen(str)+1));
-    
-    // Copy the content into the buffer.
+    if(!info->buf->data) {
+        printf("Cannot allocate memory.");
+        exit(-1);
+    }
+
+    /* Copy the content into the buffer. */
     size_t r = (size_t)strcpy(info->buf->data, str); 
     if(!r) {
         printf("Cannot read string.");
+        exit(-1);
     }
 
     intp_parse(info);
@@ -93,18 +90,18 @@ void intp_file(intp_info *info, char *fn) {
         exit(-1);
     }
 
+    /* Get the size of the file */
     fseek(file, 0, SEEK_END);
     long size = ftell(file);
     rewind(file);
 
-    // To do: Use sds
     info->buf->data = (char*)malloc(sizeof(char) * size);
     if(!info->buf->data) {
         printf("Cannot allocate memory.\n");
         exit(-1);
     }
 
-    // Read the file content and copy to buffer
+    /* Read the file content and copy to buffer */
     size_t r = fread(info->buf->data, 1, size+1, file); 
     if(!r) {
         printf("Cannot read file.\n");
