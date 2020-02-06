@@ -1,33 +1,66 @@
-#include "intp.h"
+#include "../intp.h"
 
-//////////////////////////////
-//----------Lexer-------------
-//////////////////////////////
 
-// Some of these functions are available in standard
-// library, but still I decided to do it myself.
-static inline int is_whitespace(char c) {
-    return (c == ' ' || c == '\t' || c == '\n');
-}
+enum _token_type {
+	// Different types of numbers [0+i]
+	// 0
+    hex=0,
+    bin,
+    num,
+    // 2
 
-static inline int is_sym(char c) {
-    return (c >= '!' && c <= '/') || 
-    	   (c >= ':' && c <= '@') ||
-    	   (c >= '[' && c <= '`') ||
-    	   (c >= '{' && c <= '~');
-}
+	// Keywords [10+i]
+	// 10
+	kwd_break=10,
+	kwd_case,
+	kwd_class,
+	kwd_const,
+	kwd_continue,
+	kwd_define,
+	kwd_delete,
+	kwd_do,
+	kwd_else,
+	kwd_for,
+	kwd_if,
+	kwd_in,          
+	kwd_is, 
+	kwd_import,   
+	kwd_int,      
+	kwd_pass,
+	kwd_real, 
+	kwd_string,   
+	kwd_return,   
+	kwd_switch,	
+	kwd_var,
+	kwd_void,    
+	kwd_while,
+	// 32
 
-static inline int is_id(char c) {
-    return isalnum(c) || c == '_';
-}
+	// 33
+    ident,     // Any identifier
+	string,
+	// 34
 
-static inline int is_bin(char c) {
-	return (c == '0') || (c == '1');
-}
+	operator,
 
-// Operators. Here the order of operators is 
-// important and should be corresponding to
-// enum _token_type
+    // Types of operators
+    // 40
+    op_add=40,
+    op_sub,
+    op_mul,
+    op_div,
+    op_inc,
+    op_dec,
+    // 45
+
+	semicol=70
+};
+
+
+/* Operators. Here the order of operators is 
+ * important and should be corresponding to
+ * enum _token_type
+ */
 const char *_operators[] = {
     "+", "-", "*", "/", "++", "--"
 };
@@ -40,6 +73,29 @@ const char *_keywords[] = {
 	"real", "string", "return", "switch", 	
 	"var", "void", "while"
 };
+
+int is_whitespace(char c) {
+    return (c == ' ' || c == '\t' || c == '\n');
+}
+
+int is_sym(char c) {
+    return (c >= '!' && c <= '/') || 
+    	   (c >= ':' && c <= '@') ||
+    	   (c >= '[' && c <= '`') ||
+    	   (c >= '{' && c <= '~');
+}
+
+int is_id(char c) {
+    return isalnum(c) || c == '_';
+}
+
+int is_bin(char c) {
+	return (c == '0') || (c == '1');
+}
+
+/*
+ *----------Lexer-------------
+ */
 
 unsigned int tok_capacity = 19;
   		 

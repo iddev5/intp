@@ -1,4 +1,4 @@
-#include "intp.h"
+#include "../intp.h"
 
 //////////////////////////////
 //----------Parser------------
@@ -11,7 +11,7 @@ void intp_parse(intp_info *info) {
 
         /* For Test */
         #ifdef INTP_DEBUG
-            printf("token: %s\t\ttype:%d\n", info->buf->tok, token);
+            printf("token: %s\t\ttype:%d\n", info->buf->tok, info->buf->type);
         #endif
         
         if(*info->buf->data == '\0') break;
