@@ -15,19 +15,19 @@
 /*
  *----------Structs-----------
  */
-class {
+class intp_dataobject {
     char *key;
     void *value;
     uint32_t scope_number;
 } intp_dataobject;
 
-class {
+class intp_src_buf {
 	unsigned int line, col;
     char *data, *tok;
 	int type;
 } intp_src_buf;
 
-class {
+class intp_info {
 	intp_src_buf *buf;
     uint32_t scope_count;
     intp_dataobject *objs;

@@ -10,10 +10,8 @@ int main(int argc, char **argv) {
         exit(-1);
 	}
 
-	int r;
     intp_info info;
-
-    r = intp_init(&info);
+    int r = intp_init(&info);
     if(r) intp_file(&info, argv[1]);
 
 	intp_free(&info);

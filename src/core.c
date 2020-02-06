@@ -39,6 +39,8 @@ void intp_free(intp_info *info) {
 
     shfree(info->objs);
 
+    printf("Dellocation\n");
+
     // Free if it is not empty.
     if(strlen(info->buf->data) != 0) free(info->buf->data);
     if(strlen(info->buf->tok ) != 0) free(info->buf->tok );

@@ -1,71 +1,35 @@
 #include "../intp.h"
 
-
-enum _token_type {
-	// Different types of numbers [0+i]
-	// 0
-    hex=0,
+enum token_type {
+    hex=-50,
     bin,
     num,
-    // 2
 
-	// Keywords [10+i]
-	// 10
-	kwd_break=10,
-	kwd_case,
-	kwd_class,
-	kwd_const,
-	kwd_continue,
-	kwd_define,
-	kwd_delete,
-	kwd_do,
-	kwd_else,
-	kwd_for,
-	kwd_if,
-	kwd_in,          
-	kwd_is, 
-	kwd_import,   
-	kwd_int,      
-	kwd_pass,
-	kwd_real, 
-	kwd_string,   
-	kwd_return,   
-	kwd_switch,	
-	kwd_var,
-	kwd_void,    
-	kwd_while,
-	// 32
+	kwd_break=-35, kwd_case, kwd_class, kwd_const,
+	kwd_continue, kwd_define, kwd_delete, kwd_do, 
+	kwd_else, kwd_for, kwd_if, kwd_in, 
+	kwd_is, kwd_import, kwd_int, kwd_pass, 
+	kwd_real, kwd_string, kwd_return, kwd_switch, 
+	kwd_var, kwd_void, kwd_while,
 
-	// 33
-    ident,     // Any identifier
-	string,
-	// 34
+    ident=-5,     
+	string=-4,
 
-	operator,
-
-    // Types of operators
-    // 40
-    op_add=40,
-    op_sub,
-    op_mul,
-    op_div,
-    op_inc,
-    op_dec,
-    // 45
-
-	semicol=70
 };
 
 
 /* Operators. Here the order of operators is 
  * important and should be corresponding to
- * enum _token_type
+ * enum token_type
  */
-const char *_operators[] = {
+/*
+Temporarily disabled
+const char *operators[] = {
     "+", "-", "*", "/", "++", "--"
 };
+*/
 
-const char *_keywords[] = {
+const char *keywords[] = {
 	"break", "case", "class", "const", 
 	"continue", "define", "delete", "do", 		
 	"else", "for", "if", "in",     
@@ -133,6 +97,11 @@ int intp_lex(intp_src_buf *buf) {
 			while(isalnum(*buf->data) || check('_'));
 
 			buf->type = ident;
+			for(int i = 0; i < sizeof(keywords)/sizeof(char*); i++) {
+				if(!strcmp(buf->tok, keywords[i])) {
+					buf->type = kwd_break + i;
+				}
+			}
 		}
 		
 		if(isdigit(*buf->data)) {
@@ -193,7 +162,7 @@ int intp_lex(intp_src_buf *buf) {
         else {
         	/* Presently it only supports singl-char operator tokens */ 
 			copy; 
-			buf->type = operator;
+			buf->type = (int)*buf->tok;
 		}
     }
 
