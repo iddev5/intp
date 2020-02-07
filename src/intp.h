@@ -39,9 +39,9 @@ class intp_dataobject {
 } intp_dataobject;
 
 class intp_src_buf {
-	unsigned int line, col;
+	uint32_t line, col;
     char *data, *tok;
-	int type;
+	int32_t type;
 } intp_src_buf;
 
 class intp_info {
@@ -54,7 +54,7 @@ class intp_info {
 /*
  *----------Lexer-------------
  */
-int intp_lex(intp_src_buf *buf);
+int32_t intp_lex(intp_src_buf *buf);
 
 /*
  *----------Parser------------
@@ -66,7 +66,7 @@ void intp_parse(intp_info *info);
  *----------Logging-----------
  */
 void intp_warn(intp_src_buf *buf, char *str);
-int intp_error(intp_src_buf *buf, char *str);
+int  intp_error(intp_src_buf *buf, char *str);
 
 /*
  *----------Data Types--------
@@ -77,7 +77,7 @@ void intp_set_data(intp_info *info, const char* name, void *value, bool is_const
 /*
  *----------Main--------------
  */
-int intp_init(intp_info *info);
+int  intp_init(intp_info *info);
 void intp_free(intp_info *info);
 
 void intp_string(intp_info *info , char *str);

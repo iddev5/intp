@@ -43,7 +43,7 @@ int is_bin(char c) {
  *----------Lexer-------------
  */
 
-unsigned int tok_capacity = 19;
+uint32_t tok_capacity = 19;
   		 
 #define copy \
 	if(times >= tok_capacity) { \
@@ -55,12 +55,12 @@ unsigned int tok_capacity = 19;
 	
 #define check(y) *buf->data == y
 
-int intp_lex(intp_src_buf *buf) {
-	unsigned int times = 0;
+int32_t intp_lex(intp_src_buf *buf) {
+	uint32_t times = 0;
 	buf->type = -1;
 
-	unsigned long x =  strlen(buf->tok);
-	for(unsigned short i = 0; i < x; i++) { 
+	uint16_t x =  strlen(buf->tok);
+	for(uint16_t i = 0; i < x; i++) { 
 	    buf->tok[i] = '\0'; 
 	}
 	

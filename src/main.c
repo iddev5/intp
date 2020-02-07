@@ -11,8 +11,8 @@ int main(int argc, char **argv) {
 	}
 
     intp_info info;
-    int r = intp_init(&info);
-    if(r) intp_file(&info, argv[1]);
+    if(intp_init(&info)) 
+        intp_file(&info, argv[1]);
 
 	intp_free(&info);
 }
