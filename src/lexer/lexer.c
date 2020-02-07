@@ -1,23 +1,5 @@
 #include "../intp.h"
 
-enum token_type {
-    hex=-50,
-    bin,
-    num,
-
-	kwd_break=-35, kwd_case, kwd_class, kwd_const,
-	kwd_continue, kwd_define, kwd_delete, kwd_do, 
-	kwd_else, kwd_for, kwd_if, kwd_in, 
-	kwd_is, kwd_import, kwd_int, kwd_pass, 
-	kwd_real, kwd_string, kwd_return, kwd_switch, 
-	kwd_var, kwd_void, kwd_while,
-
-    ident=-5,     
-	string=-4,
-
-};
-
-
 /* Operators. Here the order of operators is 
  * important and should be corresponding to
  * enum token_type
