@@ -30,7 +30,7 @@ int intp_init(intp_info *info) {
     /* Initial allocation */
     info->buf->tok  = (char*)malloc(sizeof(char)*19);
 
-    return 1;
+    return info->buf->tok?1:0;
 }
 
 void intp_free(intp_info *info) {
