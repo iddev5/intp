@@ -19,13 +19,10 @@ enum token_type {
 
     STRING, IDENTIFIER,
 
-	kwd_break, kwd_case, kwd_class, kwd_const,
-	kwd_continue, kwd_define, kwd_delete, kwd_do, 
-	kwd_else, kwd_for, kwd_if, kwd_in, 
-	kwd_is, kwd_import, kwd_int, kwd_pass, 
-	kwd_real, kwd_string, kwd_return, kwd_switch, 
-	kwd_var, kwd_void, kwd_while
-
+	KWD_AND, KWD_BREAK, KWD_CONTINUE, KWD_DO,
+    KWD_ELSE, KWD_FALSE, KWD_FOR, KWD_IF,
+    KWD_IN, KWD_IMPORT, KWD_OR, KWD_RETURN,
+    KWD_TRUE, KWD_WHILE
 };
 
 #define class typedef struct

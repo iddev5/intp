@@ -1,21 +1,24 @@
 #include "intp.h"
 
 const char *keywords[] = {
-	"break", "case", "class", "const", 
-	"continue", "define", "delete", "do", 		
-	"else", "for", "if", "in",     
-	"is", "import", "int", "pass",
-	"real", "string", "return", "switch", 	
-	"var", "void", "while"
+	"and", "break", "continue", "do", "else",   "False", "for", 
+    "if",  "in",    "import",   "or", "return", "True",  "while"
 };
 
 static inline char this_ch(intp_src_buf *buf) {
     return *buf->data;
 }
 
+static inline char prev_ch(intp_src_buf *buf) {
+    return *(buf->data-1);
+}
+
 static inline char next_ch(intp_src_buf *buf) {
     return *buf->data++;
 }
+
+#define copy if(times >= cap) { cap += 4; buf->tok = realloc(buf->tok, cap); } \
+buf->tok[times++] = next_ch(buf);
 
 int intp_lex(intp_src_buf *buf) {
     buf->type = 0;
@@ -39,9 +42,26 @@ lexl:
         case ';' : buf->type = SEMI; next_ch(buf); break;
         case ':' : buf->type = COL;  next_ch(buf); break;
         case '#' : buf->type = HASH; next_ch(buf); break;
+        case '\"' : case '\'': {
+            int times = 0, cap = strlen(buf->tok);
+            memset(buf->tok, '\0', cap);
+
+            next_ch(buf); /* Eat " or ' */
+
+            while(this_ch(buf) != '\0') {
+                copy;
+
+                if(this_ch(buf) == '\"' || this_ch(buf) == '\'') {
+                    if(prev_ch(buf) == '\\') { copy; }
+                    else { break; }
+                }
+            }
+
+            buf->type = STRING;
+            break;
+        }
         case '0' : case '1': case '2': case '3': case '4':
-        case '5' : case '6': case '7': case '8': case '9':
-        {
+        case '5' : case '6': case '7': case '8': case '9': {
             int inn = 0;
             while(this_ch(buf) >= '0' && this_ch(buf) <= '9') {
                 inn = ((inn)*10) + (this_ch(buf)-'0');
@@ -53,16 +73,11 @@ lexl:
 
             break;
         }
-        default:
-        {   
+        default: {   
             int times = 0, cap = strlen(buf->tok);
             memset(buf->tok, '\0', cap);
             do { 
-                if(times >= cap) {
-                    cap += 4;
-                    buf->tok = realloc(buf->tok, cap);
-                }
-                buf->tok[times++] = next_ch(buf);
+                copy;
             } while((this_ch(buf) >= 'a' && this_ch(buf) <= 'z') || 
                     (this_ch(buf) >= 'A' && this_ch(buf) <= 'Z') ||
                     (this_ch(buf) >= '0' && this_ch(buf) <= '9') ||
@@ -71,7 +86,7 @@ lexl:
             buf->type = IDENTIFIER;
 
             for(int i=0; i<sizeof(keywords)/sizeof(char*); i++) {
-                if(!strcmp(buf->tok, keywords[i])) buf->type = kwd_break + i;
+                if(!strcmp(buf->tok, keywords[i])) buf->type = KWD_AND + i;
             }
 
             break;
