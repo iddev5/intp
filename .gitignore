@@ -4,7 +4,6 @@
 
 # Executables and Object FIles
 intp
-run
 *.o
 
 # Addiditonal files by CodeBlocks IDE
