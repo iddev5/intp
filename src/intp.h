@@ -11,19 +11,20 @@
 #include "../depends/stb_ds.h"
 
 enum token_type {
-    hex=-50,
-    bin,
-    num,
+    HEX, BIN, NUM,
 
-	kwd_break=-35, kwd_case, kwd_class, kwd_const,
+    EOL, LBRAC, RBRAC, LPAREN, RPAREN,
+    PLUS, MINUS, MULTI, DIV, MOD, POW,
+    GRT, LES, EQU, SEMI, COL, HASH,
+
+    STRING, IDENTIFIER,
+
+	kwd_break, kwd_case, kwd_class, kwd_const,
 	kwd_continue, kwd_define, kwd_delete, kwd_do, 
 	kwd_else, kwd_for, kwd_if, kwd_in, 
 	kwd_is, kwd_import, kwd_int, kwd_pass, 
 	kwd_real, kwd_string, kwd_return, kwd_switch, 
-	kwd_var, kwd_void, kwd_while,
-
-    ident=-5,     
-	string=-4,
+	kwd_var, kwd_void, kwd_while
 
 };
 
@@ -42,6 +43,11 @@ class intp_src_buf {
 	uint32_t line, col;
     char *data, *tok;
 	int32_t type;
+
+    union {
+        int32_t inn;
+        char kwd[19];
+    } val;
 } intp_src_buf;
 
 class intp_info {
@@ -54,7 +60,7 @@ class intp_info {
 /*
  *----------Lexer-------------
  */
-int32_t intp_lex(intp_src_buf *buf);
+int intp_lex(intp_src_buf *buf);
 
 /*
  *----------Parser------------
