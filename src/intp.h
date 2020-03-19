@@ -25,16 +25,28 @@ enum token_type {
     KWD_TRUE, KWD_WHILE
 };
 
+enum data_type {
+    INT, REAL, STR, OTH
+};
+
 #define class typedef struct
 
 /*
  *----------Structs-----------
  */
-class intp_dataobject {
-    char *key;
-    void *value;
-    uint32_t scope_number;
-} intp_dataobject;
+class intp_data {
+    char *name;
+    uint8_t  type;
+    uint32_t scope;
+    
+    union {
+        int64_t inn;
+        double  fnn;
+        char *str;
+        void *oth;
+    } val;
+
+} intp_data;
 
 class intp_src_buf {
 	uint32_t line, col;
@@ -42,14 +54,15 @@ class intp_src_buf {
 	int32_t type;
 
     union {
-        int32_t inn;
+        int64_t inn;
+        double  fnn;
     } val;
 } intp_src_buf;
 
 class intp_info {
 	intp_src_buf *buf;
     uint32_t scope_count;
-    intp_dataobject *objs;
+    intp_data *objs;
 
 } intp_info;
 
@@ -73,8 +86,8 @@ int  intp_error(intp_src_buf *buf, char *str);
 /*
  *----------Data Types--------
  */
-void*intp_get_data(intp_info *info, char *name);
-void intp_set_data(intp_info *info, const char* name, void *value, bool is_constant);
+intp_data *intp_get_data(intp_info *info, char *name);
+void intp_set_data(intp_info *info, const char* name, int type, void *value);
 
 /*
  *----------Main--------------

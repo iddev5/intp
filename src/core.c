@@ -28,7 +28,7 @@ int intp_init(intp_info *info) {
     info->buf  = malloc(sizeof(intp_src_buf));
 
     /* Initial allocation */
-    info->buf->tok  = (char*)malloc(sizeof(char)*19);
+    info->buf->tok = (char*)malloc(sizeof(char)*19);
 
     return info->buf->tok?1:0;
 }
@@ -37,11 +37,11 @@ void intp_free(intp_info *info) {
 
     fclose(logfile);
 
-    shfree(info->objs);
+    arrfree(info->objs);
 
     printf("Dellocation\n");
 
-    // Free if it is not empty.
+    /* Free if it is not empty. */
     if(strlen(info->buf->data) != 0) free(info->buf->data);
     if(strlen(info->buf->tok ) != 0) free(info->buf->tok );
 }
