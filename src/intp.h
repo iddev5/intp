@@ -46,7 +46,6 @@ class intp_src_buf {
 
     union {
         int32_t inn;
-        char kwd[19];
     } val;
 } intp_src_buf;
 
