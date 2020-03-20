@@ -62,7 +62,7 @@ class intp_src_buf {
 class intp_info {
 	intp_src_buf *buf;
     uint32_t scope_count;
-    intp_data *objs;
+    intp_data **objs;
 
 } intp_info;
 
@@ -74,8 +74,7 @@ int intp_lex(intp_src_buf *buf);
 /*
  *----------Parser------------
  */
-void*intp_eval(intp_info *info);
-void intp_parse(intp_info *info);
+intp_data *intp_parse(intp_info *info);
 
 /*
  *----------Logging-----------
@@ -86,6 +85,7 @@ int  intp_error(intp_src_buf *buf, char *str);
 /*
  *----------Data Types--------
  */
+intp_data *new_data(const char *name, int type, void *value);
 intp_data *intp_get_data(intp_info *info, char *name);
 void intp_set_data(intp_info *info, const char* name, int type, void *value);
 
