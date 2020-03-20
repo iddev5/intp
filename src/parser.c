@@ -16,20 +16,30 @@ intp_data *atom(intp_info *info) {
 }
 
 intp_data *sum(intp_info *info) {
-    intp_data *to_return, *x, *y = atom(info);
+    int type = -1;
+    intp_data *x, *y;
 
-    if(info->buf->type == PLUS) {
-        x = atom(info);
-        if(x->type == y->type) {
-            if(x->type == INT) {
-                int64_t i = (x->val.inn + y->val.inn);
-                to_return = new_data("", INT, &i);
-            }
-        }
+    x = atom(info);
+    type = info->buf->type; intp_lex(info->buf);
+    y = atom(info); 
+
+    while((type == PLUS || type == MINUS)) {
+
+        printf("before_1: %ld\n", x->val.inn); 
+        printf("before_2: %ld\n", y->val.inn);
+
+        int64_t i = (type == PLUS) ? (x->val.inn + y->val.inn) : (x->val.inn - y->val.inn);
+        x = new_data("", INT, &i); 
+        
+        type = info->buf->type;
+        intp_lex(info->buf);
+
+        y = atom(info); 
+        printf("after0: %ld\n", x->val.inn);
     }
     
     intp_lex(info->buf);
-    return to_return;
+    return x;
 } 
 
 intp_data *paren_expr(intp_info *info) {
@@ -62,10 +72,10 @@ intp_data *intp_parse(intp_info* info) {
             default: to_return = expr(info); break;
         }
 
-        printf("To return: %ld\n", to_return->val.inn);
 
         if(*info->buf->data == '\0') break;
     }
+        printf("To return: %ld\n", to_return->val.inn);
 
     return to_return;
 }

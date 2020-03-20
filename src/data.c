@@ -9,10 +9,6 @@ intp_data *new_data(const char *name, int type, void *value) {
     strcpy(data->name, name);
     data->type = type;
 
-    /*
-    int *i = (int*)value;
-    printf("i = %i\n", *i);
-    */
     switch(data->type) {
         case INT: { 
             int64_t *inn = (int64_t*)value;
