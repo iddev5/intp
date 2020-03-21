@@ -61,7 +61,7 @@ void intp_string(intp_info *info , char *str) {
         exit(-1);
     }
 
-    intp_parse(info);
+    intp_parse(info->buf, info);
 }
 
 void intp_file(intp_info *info, char *fn) {
@@ -93,5 +93,5 @@ void intp_file(intp_info *info, char *fn) {
 
     fclose(file);
     strcat(info->buf->data, " \0");
-    intp_parse(info);
+    intp_parse(info->buf, info);
 }

@@ -74,7 +74,7 @@ int intp_lex(intp_src_buf *buf);
 /*
  *----------Parser------------
  */
-intp_data *intp_parse(intp_info *info);
+intp_data *intp_parse(intp_src_buf *buf, intp_info *info);
 
 /*
  *----------Logging-----------
