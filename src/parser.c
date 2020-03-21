@@ -55,8 +55,32 @@ intp_data *paren_expr(intp_src_buf *buf, intp_info *info) {
 
 intp_data *expr(intp_src_buf *buf, intp_info *info) {
     intp_data *to_return;
-    to_return = sum(buf, info);
-    intp_lex(buf);
+
+    switch(buf->type) {
+        case IDENTIFIER: {
+            intp_data *val;
+            char *name = malloc(sizeof(char*)*strlen(buf->tok));
+            strcpy(name, buf->tok);
+
+            intp_lex(buf);
+
+            /* Variable assignment */
+            if(buf->type == EQU) { 
+                intp_lex(buf); /* Eat = */
+                val = expr(buf, info);
+        
+                val->name = malloc(sizeof(char*)*strlen(name));        
+                strcpy(val->name, name);
+                
+                intp_set_dataEx(info, val);
+            }
+
+            to_return = val;
+            break;
+        }
+        case SEMI: intp_lex(buf); break;
+        default: to_return = sum(buf, info); intp_lex(buf); break;
+    }
     return to_return;
 }
 
@@ -65,7 +89,8 @@ intp_data *intp_parse(intp_src_buf *buf, intp_info* info) {
 
     intp_lex(buf);
     while(true) {
-        to_return = expr(buf, info); 
+        to_return = expr(buf, info);
+        
         printf("To return: %d\n", (int)to_return->val.inn);
 
         //printf("it is %d\n", info->buf->type);

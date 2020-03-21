@@ -40,3 +40,8 @@ void intp_set_data(intp_info *info, const char* name, int type, void *value) {
     data->scope = info->scope_count;
     arrput(info->objs, data);
 }
+
+void intp_set_dataEx(intp_info *info, intp_data *data) {
+    data->scope = info->scope_count;
+    arrput(info->objs, data);
+}

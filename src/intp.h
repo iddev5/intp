@@ -88,6 +88,7 @@ int  intp_error(intp_src_buf *buf, char *str);
 intp_data *new_data(const char *name, int type, void *value);
 intp_data *intp_get_data(intp_info *info, char *name);
 void intp_set_data(intp_info *info, const char* name, int type, void *value);
+void intp_set_dataEx(intp_info *info, intp_data *data);
 
 /*
  *----------Main--------------
