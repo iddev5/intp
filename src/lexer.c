@@ -21,7 +21,7 @@ static inline char next_ch(intp_src_buf *buf) {
 buf->tok[times++] = next_ch(buf);
 
 int intp_lex(intp_src_buf *buf) {
-    buf->type = 0;
+    buf->type = -1;
 lexl:
     switch(this_ch(buf)) {
         case ' ' : case '\t': next_ch(buf); goto lexl;
@@ -73,23 +73,26 @@ lexl:
 
             break;
         }
-        default: {   
-            int times = 0, cap = strlen(buf->tok);
-            memset(buf->tok, '\0', cap);
-            do { 
-                copy;
-            } while((this_ch(buf) >= 'a' && this_ch(buf) <= 'z') || 
-                    (this_ch(buf) >= 'A' && this_ch(buf) <= 'Z') ||
-                    (this_ch(buf) >= '0' && this_ch(buf) <= '9') ||
-                    (this_ch(buf) == '_'));
+        default: {
+            if((this_ch(buf) >= 'a' && this_ch(buf) <= 'z') || 
+               (this_ch(buf) >= 'A' && this_ch(buf) <= 'Z')) {   
+                int times = 0, cap = strlen(buf->tok);
+                memset(buf->tok, '\0', cap);
+                do { 
+                    copy;
+                } while((this_ch(buf) >= 'a' && this_ch(buf) <= 'z') || 
+                        (this_ch(buf) >= 'A' && this_ch(buf) <= 'Z') ||
+                        (this_ch(buf) >= '0' && this_ch(buf) <= '9') ||
+                        (this_ch(buf) == '_'));
 
-            buf->type = IDENTIFIER;
+                buf->type = IDENTIFIER;
 
-            for(int i=0; i<sizeof(keywords)/sizeof(char*); i++) {
-                if(!strcmp(buf->tok, keywords[i])) buf->type = KWD_AND + i;
+                for(int i=0; i<sizeof(keywords)/sizeof(char*); i++) {
+                    if(!strcmp(buf->tok, keywords[i])) buf->type = KWD_AND + i;
+                }
+
+                break;
             }
-
-            break;
         }
     }
 
