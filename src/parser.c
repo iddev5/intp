@@ -7,12 +7,17 @@ intp_data *paren_expr(intp_info *info);
 intp_data *atom(intp_info *info) {
     intp_data *to_return;
     switch(info->buf->type) {
-        case NUM: to_return = new_data("", INT, &info->buf->val.inn); break;
-        case IDENTIFIER: to_return = intp_get_data(info, info->buf->tok); break;
-        case STRING: to_return = new_data("", STR, info->buf->tok); break;
+        case NUM: 
+            to_return = new_data("", INT, &info->buf->val.inn); 
+            intp_lex(info->buf); break;
+        case IDENTIFIER: 
+            to_return = intp_get_data(info, info->buf->tok); 
+            intp_lex(info->buf); break;
+        case STRING: 
+            to_return = new_data("", STR, info->buf->tok); 
+            intp_lex(info->buf); break;
         default: to_return = paren_expr(info); break;
     }
-    intp_lex(info->buf);
     return to_return;
 }
 
@@ -20,7 +25,7 @@ intp_data *sum(intp_info *info) {
     int type = -1;
     intp_data *x, *y;
 
-    x = atom(info);
+    x = atom(info); 
     type = info->buf->type;
 
     while((type == PLUS || type == MINUS)) {
@@ -50,8 +55,7 @@ intp_data *paren_expr(intp_info *info) {
 
 intp_data *expr(intp_info *info) {
     intp_data *to_return;
-    if(info->buf->type == LPAREN) to_return = paren_expr(info);
-    else { to_return = sum(info); }
+    to_return = sum(info);
     intp_lex(info->buf);
     return to_return;
 }
