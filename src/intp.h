@@ -85,13 +85,14 @@ intp_data *intp_parse(intp_src_buf *buf, intp_info *info);
  */
 void intp_warn(intp_src_buf *buf, char *str);
 int  intp_error(intp_src_buf *buf, char *str);
+int  intp_error_std(char *str);
 
 /*
  *----------Data Types--------
  */
 intp_data *intp_get_data(intp_info *info, char *name);
 void intp_set_data(intp_info *info, const char* name, int type, void *value);
-void intp_set_dataEx(intp_info *info, intp_data *data);
+void intp_set_data_from(intp_info *info, intp_data *data);
 
 /*
  *----------Main--------------
@@ -108,6 +109,13 @@ void intp_file(intp_info *info, char *fn);
  * for general purpose.
  */
 
-intp_data *new_data(const char *name, int type, void *value);
+#ifdef __c_plus_plus 
+    #define ALLOC(type, size) (type)(malloc(sizeof(type)*(size))) 
+#else
+    #define ALLOC(type, size) malloc(sizeof(type)*(size))
+#endif
+
+char *NEW_STRING(const char *str);
+intp_data *NEW_DATA(const char *name, int type, void *value);
 
 #endif

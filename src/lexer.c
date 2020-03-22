@@ -17,15 +17,19 @@ static inline char next_ch(intp_src_buf *buf) {
     return *buf->data++;
 }
 
-#define copy if(times >= cap) { cap += 4; buf->tok = realloc(buf->tok, cap); } \
-buf->tok[times++] = next_ch(buf);
+/* A macro used for copying string and identifiers
+ * To be used carefully 
+ */
+#define copy                                     \
+if(times >= cap) {                               \
+    cap += 4; buf->tok = realloc(buf->tok, cap); \
+} buf->tok[times++] = next_ch(buf);
 
 int intp_lex(intp_src_buf *buf) {
     buf->type = -1;
 lexl:
     switch(this_ch(buf)) {
-        case ' ' : case '\t': next_ch(buf); goto lexl;
-        case '\n': buf->type = EOL; next_ch(buf); break;
+        case ' ' : case '\t': case '\n': next_ch(buf); goto lexl;
         case '{' : buf->type = LBRAC;  next_ch(buf); break;
         case '}' : buf->type = RBRAC;  next_ch(buf); break;
         case '(' : buf->type = LPAREN; next_ch(buf); break;
@@ -43,6 +47,8 @@ lexl:
         case ':' : buf->type = COL;  next_ch(buf); break;
         case '#' : buf->type = HASH; next_ch(buf); break;
         case '\"' : case '\'': {
+            /* String */
+
             int times = 0, cap = strlen(buf->tok);
             memset(buf->tok, '\0', cap);
 
@@ -51,6 +57,10 @@ lexl:
             while(this_ch(buf) != '\0') {
                 copy;
 
+                /* If an ' or " is encountered then check if the previous
+                 * character is \ i.e escape sequence. If so then continue 
+                 * copying else break
+                 */
                 if(this_ch(buf) == '\"' || this_ch(buf) == '\'') {
                     if(prev_ch(buf) == '\\') { copy; }
                     else { break; }
@@ -62,8 +72,12 @@ lexl:
         }
         case '0' : case '1': case '2': case '3': case '4':
         case '5' : case '6': case '7': case '8': case '9': {
+            /* To do: Support for hex, bin and oct */
             int inn = 0;
             while(this_ch(buf) >= '0' && this_ch(buf) <= '9') {
+                /* i = (i*10) + (n-'0') where 'i' is the target result 
+                 * and 'n' is the current char.
+                 */
                 inn = ((inn)*10) + (this_ch(buf)-'0');
                 next_ch(buf);
             }
@@ -74,10 +88,16 @@ lexl:
             break;
         }
         default: {
+            /* Identifier/Keywords */
+            /* [a-z|A-Z|_][a-z|A-Z|_|0-9]. */
+
+            /* Check if the first char is an alphabet or _ */
             if((this_ch(buf) >= 'a' && this_ch(buf) <= 'z') || 
-               (this_ch(buf) >= 'A' && this_ch(buf) <= 'Z')) {   
+               (this_ch(buf) >= 'A' && this_ch(buf) <= 'Z') ||
+                this_ch(buf) == '_') {   
                 int times = 0, cap = strlen(buf->tok);
                 memset(buf->tok, '\0', cap);
+                /* Other characters can be numbers */
                 do { 
                     copy;
                 } while((this_ch(buf) >= 'a' && this_ch(buf) <= 'z') || 
@@ -87,12 +107,18 @@ lexl:
 
                 buf->type = IDENTIFIER;
 
+                /* Check for keyword */
                 for(int i=0; i<sizeof(keywords)/sizeof(char*); i++) {
                     if(!strcmp(buf->tok, keywords[i])) buf->type = KWD_AND + i;
                 }
 
                 break;
             }
+            /* Deactivated because of errors. To be fixed
+            else {
+                
+                intp_error(buf, "Unknown character");
+            } */
         }
     }
 

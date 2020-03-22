@@ -11,20 +11,20 @@ intp_data *intp_get_data(intp_info *info, char* name) {
 }
 
 void intp_set_data(intp_info *info, const char* name, int type, void *value) {
-    intp_data *data = new_data(name, type, value);
+    intp_data *data = NEW_DATA(name, type, value);
     data->scope = info->scope_count;
     arrput(info->objs, data);
 }
 
-void intp_set_dataEx(intp_info *info, intp_data *data) {
+void intp_set_data_from(intp_info *info, intp_data *data) {
     data->scope = info->scope_count;
     arrput(info->objs, data);
 }
 
 /* Private Functions */
 
-intp_data *new_data(const char *name, int type, void *value) {
-    intp_data *data = malloc(sizeof(intp_data*));
+intp_data *NEW_DATA(const char *name, int type, void *value) {
+    intp_data *data = ALLOC(intp_data*, 1);
     strcpy(data->name, name);
     data->type = type;
 
@@ -35,8 +35,7 @@ intp_data *new_data(const char *name, int type, void *value) {
             break; 
         }
         case STR: 
-            data->val.str = malloc(sizeof(char*)*strlen(value)); 
-            strcpy(data->val.str, value); 
+            data->val.str = NEW_STRING(value);
             break;
         case OTH: data->val.oth = value;
     }

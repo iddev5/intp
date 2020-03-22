@@ -10,3 +10,8 @@ int intp_error(intp_src_buf *buf, char *str) {
     printf("Error: Line %u, Column %u: %s\n", buf->line, buf->col, str);
     exit(-1);
 }
+
+int intp_error_std(char *str) {
+    printf("Fatal Error: %s\n", str);
+    exit(-1);
+}

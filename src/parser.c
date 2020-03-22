@@ -4,23 +4,26 @@
 intp_data *expr(intp_src_buf *buf, intp_info *info);
 intp_data *paren_expr(intp_src_buf *buf, intp_info *info);
 
+/* Atom - the structural valued unit */
+/* atom ::= num | id | paren_expr */
 intp_data *atom(intp_src_buf *buf, intp_info *info) {
     intp_data *to_return;
     switch(buf->type) {
         case NUM: 
-            to_return = new_data("", INT, &buf->val.inn); 
+            to_return = NEW_DATA("", INT, &buf->val.inn); 
             intp_lex(buf); break;
         case IDENTIFIER: 
             to_return = intp_get_data(info, buf->tok); 
             intp_lex(buf); break;
         case STRING: 
-            to_return = new_data("", STR, buf->tok); 
+            to_return = NEW_DATA("", STR, buf->tok); 
             intp_lex(buf); break;
         default: to_return = paren_expr(buf, info); break;
     }
     return to_return;
 }
 
+/* sum ::= atom [+|- atom] ... */
 intp_data *sum(intp_src_buf *buf, intp_info *info) {
     int type = -1;
     intp_data *x, *y;
@@ -33,7 +36,7 @@ intp_data *sum(intp_src_buf *buf, intp_info *info) {
         y = atom(buf, info);
 
         int64_t i = (type == PLUS) ? (x->val.inn + y->val.inn) : (x->val.inn - y->val.inn);
-        x = new_data("", INT, &i); 
+        x = NEW_DATA("", INT, &i); 
         
         type = buf->type;
     }
@@ -41,6 +44,7 @@ intp_data *sum(intp_src_buf *buf, intp_info *info) {
     return x;
 }
 
+/* paren_expr ::= ( expr )*/
 intp_data *paren_expr(intp_src_buf *buf, intp_info *info) {
     intp_data *to_return;
     
@@ -53,26 +57,23 @@ intp_data *paren_expr(intp_src_buf *buf, intp_info *info) {
     return to_return;
 }
 
+/* expr ::= id = sum | sum */
 intp_data *expr(intp_src_buf *buf, intp_info *info) {
     intp_data *to_return;
 
     switch(buf->type) {
         case IDENTIFIER: {
             intp_data *val;
-            char *name = malloc(sizeof(char*)*strlen(buf->tok));
-            strcpy(name, buf->tok);
-
+            char *name = NEW_STRING(buf->tok);
+            
             intp_lex(buf);
 
             /* Variable assignment */
             if(buf->type == EQU) { 
                 intp_lex(buf); /* Eat = */
                 val = expr(buf, info);
-        
-                val->name = malloc(sizeof(char*)*strlen(name));        
-                strcpy(val->name, name);
-                
-                intp_set_dataEx(info, val);
+                val->name = name;
+                intp_set_data_from(info, val);
             }
 
             to_return = val;
