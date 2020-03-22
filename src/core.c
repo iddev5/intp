@@ -1,33 +1,16 @@
 #define STB_DS_IMPLEMENTATION
 #include "intp.h"
 
-/*
- *----------Logging-----------
- */
-
 FILE *logfile;
-
-void intp_warn(intp_src_buf *buf, char *str) {
-    fprintf(logfile, "Warning: Line %u, Column %u: %s\n", buf->line, buf->col, str);
-}
-
-int intp_error(intp_src_buf *buf, char *str) {
-    printf("Error: Line %u, Column %u: %s\n", buf->line, buf->col, str);
-    exit(-1);
-}
-
-/*
- *----------Main--------------
- */
 
 int intp_init(intp_info *info) {
     /* Open the log file only when the interpreter is initialzed. */
     logfile = fopen("report.log", "w");
 
     info->objs = NULL;
-    info->buf  = malloc(sizeof(intp_src_buf));
-
+    
     /* Initial allocation */
+    info->buf  = malloc(sizeof(intp_src_buf));
     info->buf->tok = (char*)malloc(sizeof(char)*19);
 
     return info->buf->tok?1:0;
@@ -36,10 +19,11 @@ int intp_init(intp_info *info) {
 void intp_free(intp_info *info) {
 
     fclose(logfile);
-
     arrfree(info->objs);
 
+#ifdef INTP_DEBUG
     printf("Dellocation\n");
+#endif
 
     /* Free if it is not empty. */
     if(strlen(info->buf->data) != 0) free(info->buf->data);

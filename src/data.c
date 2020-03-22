@@ -1,8 +1,27 @@
 #include "intp.h"
 
-/*
- *----------Data Types--------
- */
+intp_data *intp_get_data(intp_info *info, char* name) {
+    for(int i = 0; i < arrlen(info->objs); i++) {
+        intp_data *data = info->objs[i];
+        if(data->scope <= info->scope_count && !(strcmp(data->name, name))) {
+            return data;
+        }
+    }
+    return (intp_data*)-1;
+}
+
+void intp_set_data(intp_info *info, const char* name, int type, void *value) {
+    intp_data *data = new_data(name, type, value);
+    data->scope = info->scope_count;
+    arrput(info->objs, data);
+}
+
+void intp_set_dataEx(intp_info *info, intp_data *data) {
+    data->scope = info->scope_count;
+    arrput(info->objs, data);
+}
+
+/* Private Functions */
 
 intp_data *new_data(const char *name, int type, void *value) {
     intp_data *data = malloc(sizeof(intp_data*));
@@ -23,25 +42,4 @@ intp_data *new_data(const char *name, int type, void *value) {
     }
 
     return data;
-}
-
-intp_data *intp_get_data(intp_info *info, char* name) {
-    for(int i = 0; i < arrlen(info->objs); i++) {
-        intp_data *data = info->objs[i];
-        if(data->scope <= info->scope_count && !(strcmp(data->name, name))) {
-            return data;
-        }
-    }
-    return (intp_data*)-1;
-}
-
-void intp_set_data(intp_info *info, const char* name, int type, void *value) {
-    intp_data *data = new_data(name, type, value);
-    data->scope = info->scope_count;
-    arrput(info->objs, data);
-}
-
-void intp_set_dataEx(intp_info *info, intp_data *data) {
-    data->scope = info->scope_count;
-    arrput(info->objs, data);
 }

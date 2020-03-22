@@ -10,6 +10,9 @@
 
 #include "../depends/stb_ds.h"
 
+/*
+ *----------Enums------------
+ */
 enum token_type {
     HEX, BIN, NUM,
 
@@ -29,12 +32,10 @@ enum data_type {
     INT, REAL, STR, OTH
 };
 
-#define class typedef struct
-
 /*
  *----------Structs-----------
  */
-class intp_data {
+typedef struct intp_data {
     char *name;
     uint8_t  type;
     uint32_t scope;
@@ -48,7 +49,7 @@ class intp_data {
 
 } intp_data;
 
-class intp_src_buf {
+typedef struct intp_src_buf {
 	uint32_t line, col;
     char *data, *tok;
 	int32_t type;
@@ -59,12 +60,15 @@ class intp_src_buf {
     } val;
 } intp_src_buf;
 
-class intp_info {
+typedef struct intp_info {
 	intp_src_buf *buf;
     uint32_t scope_count;
     intp_data **objs;
 
 } intp_info;
+
+/* Log file of the interpreter. */
+extern FILE *logfile;
 
 /*
  *----------Lexer-------------
@@ -85,7 +89,6 @@ int  intp_error(intp_src_buf *buf, char *str);
 /*
  *----------Data Types--------
  */
-intp_data *new_data(const char *name, int type, void *value);
 intp_data *intp_get_data(intp_info *info, char *name);
 void intp_set_data(intp_info *info, const char* name, int type, void *value);
 void intp_set_dataEx(intp_info *info, intp_data *data);
@@ -98,5 +101,13 @@ void intp_free(intp_info *info);
 
 void intp_string(intp_info *info , char *str);
 void intp_file(intp_info *info, char *fn);
+
+/*
+ * Private Functions
+ * It is not recomended to use these functions
+ * for general purpose.
+ */
+
+intp_data *new_data(const char *name, int type, void *value);
 
 #endif
