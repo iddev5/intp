@@ -20,6 +20,8 @@ int intp_init(intp_info *info) {
         intp_error_std("Cannot allocate memory for source buffer");
     }
 
+    info->buf->line = info->buf->col = 1;
+
     return (info->buf->tok) ? 1 : 0;
 }
 
