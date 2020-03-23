@@ -51,7 +51,7 @@ void intp_string(intp_info *info , char *str) {
         intp_error_std("Cannot read input string");
     }
 
-    intp_parse(info->buf, info);
+    intp_interp(info->buf, info);
 }
 
 void intp_file(intp_info *info, char *fn) {
@@ -83,7 +83,7 @@ void intp_file(intp_info *info, char *fn) {
 
     fclose(file);
     info->buf->data[size+1] = '\0'; /* Append NULL termination */
-    intp_parse(info->buf, info);
+    intp_interp(info->buf, info);
 }
 
 /* Private Functions */

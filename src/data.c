@@ -12,12 +12,19 @@ intp_data *intp_get_data(intp_info *info, char* name) {
 
 void intp_set_data(intp_info *info, const char* name, int type, void *value) {
     intp_data *data = NEW_DATA(name, type, value);
-    data->scope = info->scope_count;
-    arrput(info->objs, data);
+    intp_set_data_from(info, data);
 }
 
 void intp_set_data_from(intp_info *info, intp_data *data) {
     data->scope = info->scope_count;
+
+    for(int i=0; i < arrlen(info->objs); i++) {
+        intp_data *this = info->objs[i];
+        if(!strcmp(this->name, data->name)) {
+            info->objs[i] = data; return;
+        }
+    }
+
     arrput(info->objs, data);
 }
 

@@ -1,4 +1,4 @@
-#include "intp.h"
+#include "../intp.h"
 
 /* Forward declaration */
 intp_data *expr(intp_src_buf *buf, intp_info *info);
@@ -12,7 +12,7 @@ intp_data *atom(intp_src_buf *buf, intp_info *info) {
         case NUM: 
             to_return = NEW_DATA("", INT, &buf->val.inn); 
             intp_lex(buf); break;
-        case IDENTIFIER: 
+        case IDENTIFIER:
             to_return = intp_get_data(info, buf->tok); 
             intp_lex(buf); break;
         case STRING: 
@@ -60,46 +60,6 @@ intp_data *paren_expr(intp_src_buf *buf, intp_info *info) {
 /* expr ::= id = sum | sum */
 intp_data *expr(intp_src_buf *buf, intp_info *info) {
     intp_data *to_return;
-
-    switch(buf->type) {
-        case IDENTIFIER: {
-            intp_data *val;
-            char *name = NEW_STRING(buf->tok);
-            
-            intp_lex(buf);
-
-            /* Variable assignment */
-            if(buf->type == EQU) { 
-                intp_lex(buf); /* Eat = */
-                val = expr(buf, info);
-                val->name = name;
-                intp_set_data_from(info, val);
-            }
-
-            to_return = val;
-            break;
-        }
-        default: to_return = sum(buf, info); break;
-    }
-    return to_return;
-}
-
-intp_data *intp_parse(intp_src_buf *buf, intp_info* info) {
-    intp_data *to_return;
-
-    intp_lex(buf);
-    while(true) {
-        to_return = expr(buf, info);
-        
-        if(info->buf->type != SEMI) { intp_error(buf, "Expected ; at the end of statement-expression"); }
-        else { intp_lex(buf); }
-
-#ifdef INTP_DEBUG
-        printf("To return: %d\n", (int)to_return->val.inn);
-#endif
-
-        if(*buf->data == '\0') break;
-    }
-
+    to_return = sum(buf, info);
     return to_return;
 }

@@ -80,7 +80,7 @@ int intp_lex(intp_src_buf *buf);
 /*
  *----------Parser------------
  */
-intp_data *intp_parse(intp_src_buf *buf, intp_info *info);
+void intp_interp(intp_src_buf *buf, intp_info *info);
 
 /*
  *----------Logging-----------
@@ -119,5 +119,7 @@ void intp_file(intp_info *info, char *fn);
 
 char *NEW_STRING(const char *str);
 intp_data *NEW_DATA(const char *name, int type, void *value);
+
+intp_data *expr(intp_src_buf *buf, intp_info *info);
 
 #endif
