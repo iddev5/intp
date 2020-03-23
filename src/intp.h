@@ -10,6 +10,8 @@
 
 #include "../depends/stb_ds.h"
 
+#define INTP_DEBUG
+
 /*
  *----------Enums------------
  */

@@ -79,8 +79,7 @@ intp_data *expr(intp_src_buf *buf, intp_info *info) {
             to_return = val;
             break;
         }
-        case SEMI: intp_lex(buf); break;
-        default: to_return = sum(buf, info); intp_lex(buf); break;
+        default: to_return = sum(buf, info); break;
     }
     return to_return;
 }
@@ -92,10 +91,13 @@ intp_data *intp_parse(intp_src_buf *buf, intp_info* info) {
     while(true) {
         to_return = expr(buf, info);
         
-        printf("To return: %d\n", (int)to_return->val.inn);
+        if(info->buf->type != SEMI) { intp_error(buf, "Expected ; at the end of statement-expression"); }
+        else { intp_lex(buf); }
 
-        //printf("it is %d\n", info->buf->type);
-        //if(info->buf->type != SEMI) printf("Expected ; at the end of statement-expression.\n");
+#ifdef INTP_DEBUG
+        printf("To return: %d\n", (int)to_return->val.inn);
+#endif
+
         if(*buf->data == '\0') break;
     }
 
