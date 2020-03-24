@@ -2,7 +2,9 @@
 
 const char *keywords[] = {
 	"and", "break", "continue", "do", "else",   "False", "for", 
-    "if",  "in",    "import",   "or", "return", "True",  "while"
+    "if",  "in",    "import",   "or", "return", "True",  "while",
+    
+    "puts"
 };
 
 static inline char this_ch(intp_src_buf *buf) {
@@ -51,6 +53,7 @@ lexl:
         case ';' : buf->type = SEMI; buf->col++; next_ch(buf); break;
         case ':' : buf->type = COL;  buf->col++; next_ch(buf); break;
         case '#' : buf->type = HASH; buf->col++; next_ch(buf); break;
+        case ',' : buf->type = COMMA;buf->col++; next_ch(buf); break;
         case '\"' : case '\'': {
             /* String */
 
@@ -68,7 +71,7 @@ lexl:
                  */
                 if(this_ch(buf) == '\"' || this_ch(buf) == '\'') {
                     if(prev_ch(buf) == '\\') { copy; }
-                    else { break; }
+                    else { next_ch(buf); break; }
                 }
             }
 

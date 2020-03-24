@@ -5,18 +5,18 @@ intp_data *expr(intp_src_buf *buf, intp_info *info);
 intp_data *paren_expr(intp_src_buf *buf, intp_info *info);
 
 /* Atom - the structural valued unit */
-/* atom ::= num | id | paren_expr */
+/* atom ::= num | string | id | paren_expr */
 intp_data *atom(intp_src_buf *buf, intp_info *info) {
     intp_data *to_return;
     switch(buf->type) {
         case NUM: 
             to_return = NEW_DATA("", INT, &buf->val.inn); 
             intp_lex(buf); break;
-        case IDENTIFIER:
-            to_return = intp_get_data(info, buf->tok); 
-            intp_lex(buf); break;
         case STRING: 
             to_return = NEW_DATA("", STR, buf->tok); 
+            intp_lex(buf); break;
+        case IDENTIFIER:
+            to_return = intp_get_data(info, buf->tok); 
             intp_lex(buf); break;
         default: to_return = paren_expr(buf, info); break;
     }
