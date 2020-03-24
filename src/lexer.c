@@ -80,15 +80,38 @@ lexl:
         }
         case '0' : case '1': case '2': case '3': case '4':
         case '5' : case '6': case '7': case '8': case '9': {
-            /* To do: Support for hex, bin and oct */
-            int64_t num = 0;
+            int base = 10;
+            
+            int64_t num  = 0; /* For std(base-10), hex, bin and oct */
+            real_t  real = 0.0f;
 
-            while(this_ch(buf) >= '0' && this_ch(buf) <= '9') {
-                /* i = (i*10) + (n-'0') where 'i' is the target result 
-                 * and 'n' is the current char.
-                 */
-                num = ((num)*10) + (this_ch(buf)-'0');
-                next_ch(buf); buf->col++;
+            if(this_ch(buf) == '0') {
+                next_ch(buf);
+                
+                switch(this_ch(buf)) {
+                    case 'x': case 'X': base = 16; next_ch(buf); break;
+                }
+            }
+
+            while(true) {
+                /* i = (i*base10) + (n-'0') */
+                if(this_ch(buf) >= '0' && this_ch(buf) <= '9') {
+                    num = (num*base) + (this_ch(buf)-'0');
+                    next_ch(buf); buf->col++;
+                }
+                /* i = (i*base16) + (n-['a'|'A']+0x0A) */
+                else if(base == 16) {
+                    if(this_ch(buf) >= 'a' && this_ch(buf) <= 'f') {
+                        num = (num*base) + (this_ch(buf)-'a'+0x0A);
+                        next_ch(buf); buf->col++;
+                    }
+                    else if(this_ch(buf) >= 'A' && this_ch(buf) <= 'F') {
+                        num = (num*base) + (this_ch(buf)-'A'+0x0A);
+                        next_ch(buf); buf->col++;
+                    }
+                    else { break; }
+                }
+                else { break; }
             }
 
             buf->num = num;
