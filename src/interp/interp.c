@@ -1,4 +1,5 @@
 #include "../intp.h"
+#include "expr.h"
 
 void stmt(intp_src_buf *buf, intp_info *info) {
     switch(buf->type) {
@@ -33,7 +34,7 @@ void stmt(intp_src_buf *buf, intp_info *info) {
                 val = expr(buf, info);
                 
                 switch(val->type) {
-                    case INT: printf("%ld", val->val.inn); break;
+                    case INT: printf("%ld", val->val.num); break;
                     case STR: {
                         if(!strcmp(val->val.str, "\\n")) { printf("\n"); }
                         else if(!strcmp(val->val.str, "\\t")) { printf("\t"); }
@@ -66,7 +67,7 @@ void intp_interp(intp_src_buf *buf, intp_info* info) {
     for(int i = 0; i < arrlen(info->objs); i++) {
         intp_data *var = info->objs[i];
         switch(var->type) {
-            case INT: printf("%s = %ld\n", var->name, var->val.inn); break;
+            case INT: printf("%s = %ld\n", var->name, var->val.num); break;
             case STR: printf("%s = %s\n",  var->name, var->val.str); break;
         }
         

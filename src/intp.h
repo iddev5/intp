@@ -46,28 +46,27 @@ typedef struct intp_data {
     uint32_t scope;
     
     union {
-        int64_t inn;
-        double  fnn;
+        int64_t num;
+        long double real;
         char *str;
-        void *oth;
     } val;
 
 } intp_data;
 
 typedef struct intp_src_buf {
 	uint32_t line, col;
-    char *data, *tok;
+    char *data;
 	int32_t type;
 
-    union {
-        int64_t inn;
-        double  fnn;
-    } val;
+    char *tok;
+    int64_t num;
+    long double real;
+    
 } intp_src_buf;
 
 typedef struct intp_info {
+    uint32_t scope;
 	intp_src_buf *buf;
-    uint32_t scope_count;
     intp_data **objs;
 
 } intp_info;
@@ -122,7 +121,5 @@ void intp_file(intp_info *info, char *fn);
 
 char *NEW_STRING(const char *str);
 intp_data *NEW_DATA(const char *name, int type, void *value);
-
-intp_data *expr(intp_src_buf *buf, intp_info *info);
 
 #endif

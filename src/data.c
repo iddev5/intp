@@ -3,7 +3,7 @@
 intp_data *intp_get_data(intp_info *info, char* name) {
     for(int i = 0; i < arrlen(info->objs); i++) {
         intp_data *data = info->objs[i];
-        if(data->scope <= info->scope_count && !(strcmp(data->name, name))) {
+        if(data->scope <= info->scope && !(strcmp(data->name, name))) {
             return data;
         }
     }
@@ -16,7 +16,7 @@ void intp_set_data(intp_info *info, const char* name, int type, void *value) {
 }
 
 void intp_set_data_from(intp_info *info, intp_data *data) {
-    data->scope = info->scope_count;
+    data->scope = info->scope;
 
     for(int i=0; i < arrlen(info->objs); i++) {
         intp_data *this = info->objs[i];
@@ -37,14 +37,13 @@ intp_data *NEW_DATA(const char *name, int type, void *value) {
 
     switch(data->type) {
         case INT: { 
-            int64_t *inn = (int64_t*)value;
-            data->val.inn = *inn;
+            int64_t *num = (int64_t*)value;
+            data->val.num = *num;
             break; 
         }
         case STR: 
             data->val.str = NEW_STRING(value);
             break;
-        case OTH: data->val.oth = value;
     }
 
     return data;
