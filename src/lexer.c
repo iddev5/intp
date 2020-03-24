@@ -34,7 +34,7 @@ int intp_lex(intp_src_buf *buf) {
     buf->type = -1;
 lexl:
     switch(this_ch(buf)) {
-        case ' ' : buf->col++; next_ch(buf); goto lexl;
+        case ' ' : buf->col++;  next_ch(buf); goto lexl;
         case '\t': buf->col+=4; next_ch(buf); goto lexl;
         case '\n': buf->col=1; buf->line++; next_ch(buf); goto lexl;
         case '{' : buf->type = LBRAC;  buf->col++; next_ch(buf); break;
@@ -81,7 +81,8 @@ lexl:
         case '0' : case '1': case '2': case '3': case '4':
         case '5' : case '6': case '7': case '8': case '9': {
             /* To do: Support for hex, bin and oct */
-            int num = 0;
+            int64_t num = 0;
+
             while(this_ch(buf) >= '0' && this_ch(buf) <= '9') {
                 /* i = (i*10) + (n-'0') where 'i' is the target result 
                  * and 'n' is the current char.
@@ -92,7 +93,6 @@ lexl:
 
             buf->num = num;
             buf->type = NUM;
-
             break;
         }
         default: {
@@ -117,7 +117,7 @@ lexl:
 
                 /* Check for keyword */
                 for(int i=0; i<sizeof(keywords)/sizeof(char*); i++) {
-                    if(!strcmp(buf->tok, keywords[i])) buf->type = KWD_AND + i;
+                    if(!strcmp(buf->tok, keywords[i])) { buf->type = KWD_AND + i; }
                 }
 
                 break;

@@ -28,7 +28,7 @@ int intp_init(intp_info *info) {
 void intp_free(intp_info *info) {
     /* Dellocate everything */
     fclose(logfile);
-    arrfree(info->objs);
+    stbds_arrfree(info->objs);
 
     /* Free if it is not empty. */
     if(strlen(info->buf->data) != 0) { free(info->buf->data); }

@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+#define STBDS_NO_SHORT_NAMES
 #include "../depends/stb_ds.h"
 
 #define INTP_DEBUG
@@ -16,7 +17,7 @@
  *----------Enums------------
  */
 enum token_type {
-    HEX, BIN, NUM,
+    HEX, BIN, NUM, REAL,
 
     EOL, LBRAC, RBRAC, LPAREN, RPAREN,
     PLUS, MINUS, MULTI, DIV, MOD, POW,
@@ -34,12 +35,14 @@ enum token_type {
 };
 
 enum data_type {
-    INT, REAL, STR, OTH
+    NUM_T, REAL_T, STR_T
 };
 
 /*
  *----------Structs-----------
  */
+typedef long double real_t;
+
 typedef struct intp_data {
     char *name;
     uint8_t  type;
