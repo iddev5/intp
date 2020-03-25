@@ -54,17 +54,95 @@ lexl:
         case '}' : buf->type = RBRAC;  buf->col++; next_ch(buf); break;
         case '(' : buf->type = LPAREN; buf->col++; next_ch(buf); break;
         case ')' : buf->type = RPAREN; buf->col++; next_ch(buf); break;
-        case '+' : buf->type = PLUS;   buf->col++; next_ch(buf); break;
-        case '-' : buf->type = MINUS;  buf->col++; next_ch(buf); break; 
-        case '*' : buf->type = MULTI;  buf->col++; next_ch(buf); break;
-        case '/' : buf->type = DIV;  buf->col++; next_ch(buf); break;
-        case '%' : buf->type = MOD;  buf->col++; next_ch(buf); break; 
-        case '^' : buf->type = POW;  buf->col++; next_ch(buf); break;
-        case '>' : buf->type = GRT;  buf->col++; next_ch(buf); break;
-        case '<' : buf->type = LES;  buf->col++; next_ch(buf); break;
-        case '=' : buf->type = EQU;  buf->col++; next_ch(buf); break;
         case ';' : buf->type = SEMI; buf->col++; next_ch(buf); break;
         case ':' : buf->type = COL;  buf->col++; next_ch(buf); break;
+        case '+' : {
+            buf->col++; 
+            next_ch(buf); 
+            
+            if(this_ch(buf) == '=') { buf->type = PLUSEQU;  buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '+') { buf->type = INC; buf->col++; next_ch(buf); }
+            else { buf->type = PLUS; }
+
+            break;
+        }
+        case '-' : {
+            buf->col++; 
+            next_ch(buf);
+
+            if(this_ch(buf) == '=') { buf->type = MINEQU;   buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '-') { buf->type = DEC; buf->col++; next_ch(buf); }
+            else { buf->type = MINUS; }
+
+            break;
+        } 
+        case '*' : {
+            buf->col++; 
+            next_ch(buf); 
+            
+            if(this_ch(buf) == '=') { buf->type = MULEQU;   buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '*') { buf->type = POW; buf->col++; next_ch(buf); }
+            else { buf->type = MULTI; }
+
+            break;
+        }
+        case '/' : {
+            buf->col++; 
+            next_ch(buf); 
+
+            if(this_ch(buf) == '=') { buf->type = DIVEQU;     buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '/') { buf->type = FLOOR; buf->col++; next_ch(buf); }
+            else { buf->type = DIV; }
+
+            break;
+        }
+        case '%' : {
+            buf->col++; 
+            next_ch(buf); 
+
+            if(this_ch(buf) == '=') { buf->type = MODEQU; buf->col++; next_ch(buf); }
+            else { buf->type = MOD; }
+
+            break;
+        } 
+        case '^' : {
+            buf->col++; 
+            next_ch(buf); 
+            
+            if(this_ch(buf) == '=') { buf->type = XOREQU; buf->col++; next_ch(buf); }
+            else { buf->type = XOR; }
+
+            break;
+        }
+        case '>' : {
+            buf->col++; 
+            next_ch(buf); 
+
+            if(this_ch(buf) == '=') { buf->type = GRTEQU;      buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '>') { buf->type = RSHIFT; buf->col++; next_ch(buf); }
+            else { buf->type = GRT; }
+            
+            break;
+        }
+        case '<' : {
+            buf->col++; 
+            next_ch(buf); 
+
+            if(this_ch(buf) == '=') { buf->type = LESEQU;      buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '<') { buf->type = LSHIFT; buf->col++; next_ch(buf); }
+            else { buf->type = LES; }
+            
+            break;
+        }
+        case '=' : {
+            buf->col++; 
+            next_ch(buf); 
+            
+            if(this_ch(buf) == '=') { buf->type = COMPARE; buf->col++; next_ch(buf); }
+            else { buf->type = EQU; }
+
+            break;
+        }
         case '#' : {
             buf->col++;
             
@@ -101,8 +179,6 @@ lexl:
             next_ch(buf); buf->col++; /* Eat " or ' */
 
             while(this_ch(buf) != '\0') {
-                copy;
-
                 /* If an ' or " is encountered then check if the previous
                  * character is \ i.e escape sequence. If so then continue 
                  * copying else break
@@ -122,6 +198,10 @@ lexl:
                     if(prev_ch(buf) == '\\') { copy; }
                     else { next_ch(buf); break; }
                 }
+
+                if(this_ch(buf) == '\0' || this_ch(buf) == EOF)
+
+                copy;
             }
 
             buf->type = STRING;
