@@ -42,6 +42,12 @@ intp_data *NEW_DATA(const char *name, int type, void *value) {
             break; 
         }
 
+        case REAL_T: {
+            real_t *real = (real_t*)value;
+            data->val.real = *real;
+            break;
+        }
+
         case STR_T: {
             data->val.str = NEW_STRING(value);
             break;

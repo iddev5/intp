@@ -82,8 +82,8 @@ lexl:
         case '5' : case '6': case '7': case '8': case '9': {
             int base = 10;
             
-            int64_t num  = 0; /* For std(base-10), hex, bin and oct */
-            real_t  real = 0.0f;
+            int64_t num  = 0.0f; /* For std(base-10), hex, bin and oct */
+            //real_t real = 0.0f;
 
             if(this_ch(buf) == '0') {
                 next_ch(buf);
@@ -114,9 +114,30 @@ lexl:
                 else { break; }
             }
 
-            buf->num = num;
-            buf->type = NUM;
-            break;
+            if(this_ch(buf) == '.') {
+                real_t pow = 1, append = 0;
+                //real = num;
+
+                next_ch(buf);
+                while(true) {
+                    /* i = (i*base10) + (n-'0') */
+                    if(this_ch(buf) >= '0' && this_ch(buf) <= '9') {
+                        append = (append*base) + (this_ch(buf)-'0');
+                        next_ch(buf); buf->col++;
+                    }
+                    else { break; }
+                    pow *= base;
+                }
+                num += append/pow;
+                buf->real = num;
+                buf->type = REAL;
+                break;
+            }
+            else {
+                buf->num = num;
+                buf->type = NUM;
+                break;
+            }
         }
         default: {
             /* Identifier/Keywords */

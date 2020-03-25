@@ -10,6 +10,10 @@ intp_data *atom(intp_src_buf *buf, intp_info *info) {
             to_return = NEW_DATA("", NUM_T, &buf->num); 
             intp_lex(buf); break;
         }
+        case REAL: {
+            to_return = NEW_DATA("", REAL_T, &buf->real);
+            intp_lex(buf); break;
+        }
         case STRING: {
             to_return = NEW_DATA("", STR_T, buf->tok); 
             intp_lex(buf); break;
