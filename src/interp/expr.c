@@ -4,10 +4,14 @@
 int get_binop_prec(intp_src_buf *buf) {
     int prec = -1;
     switch(buf->type) {
-        case PLUS : prec = 10; break;
-        case MINUS: prec = 20; break;
-        case MULTI: prec = 30; break;
-        case DIV  : prec = 40; break;  
+        case PLUS : prec = 5; break;
+        case MINUS: prec = 5; break;
+        case MULTI: prec = 6; break; 
+        case DIV  : prec = 6; break;
+        case MOD  : prec = 6; break;
+        case POW  : prec = 7; break;
+        case GRT  : prec = 10; break;
+        case LES  : prec = 10; break;
     }
 
     return prec;
@@ -40,7 +44,7 @@ intp_data *atom(intp_src_buf *buf, intp_info *info) {
 }
 
 intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info *info) {
-    int64_t val;
+    real_t val = 0;
 
     while(true) {
         int tok_prec = get_binop_prec(buf);
@@ -69,12 +73,32 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
             case PLUS : val = val0 + val1; break;
             case MINUS: val = val0 - val1; break;
             case MULTI: val = val0 * val1; break;
-            case DIV  : 
-                if(rhs->val.num != 0) { val = val0 / val1; }
+            case DIV  : {
+                if(val1 != 0) { val = val0 / val1; }
                 else { intp_error(buf, "Division by zero"); } 
                 break;
+            }
+            case MOD  : {
+                if(val1 != 0) { val = (int)val0 % (int)val1; }
+                else { intp_error(buf, "Division by zero"); }
+                break;
+            }
+            case POW  : {
+                val = 1;
+                for(int i = 0; i < (int)val1; i++) {
+                    val *= val0;
+                }
+                printf("val = %Lf\n", val);
+                break;
+            }  
         }
-        lhs = NEW_DATA("", NUM_T, &val);
+        if(lhs->type == NUM_T) {
+            int64_t vali = (int64_t)val;
+            lhs = NEW_DATA("", NUM_T, &vali);
+        }
+        else {
+            lhs = NEW_DATA("", NUM_T, &val);
+        }
     }
 }
 
@@ -85,7 +109,23 @@ intp_data *sum(intp_src_buf *buf, intp_info *info) {
 
     switch(x->type) {
         case NUM_T: case REAL_T: to_return = rhs_expr(0, x, buf, info); break;
-        case STR_T: to_return = x; /* For now, string can't do anything */
+        case STR_T: {
+            int type = buf->type;
+            intp_data *y;
+
+            while(type == PLUS) {
+                intp_lex(buf); 
+                y = atom(buf, info);
+                if(y->type != STR_T) {
+                    intp_error(buf,  "Expected string after + operator");
+                }
+
+                strcat(x->val.str, y->val.str);
+                type = buf->type;
+            }
+
+            to_return = x; 
+        }
     }
 
     return to_return;
