@@ -19,6 +19,11 @@ static inline char next_ch(intp_src_buf *buf) {
     return *buf->data++;
 }
 
+static inline char next_ch_get(intp_src_buf *buf) {
+    buf->data++; 
+    return *buf->data;
+}
+
 /* A macro used for copying string and identifiers
  * To be used carefully 
  */
@@ -60,7 +65,32 @@ lexl:
         case '=' : buf->type = EQU;  buf->col++; next_ch(buf); break;
         case ';' : buf->type = SEMI; buf->col++; next_ch(buf); break;
         case ':' : buf->type = COL;  buf->col++; next_ch(buf); break;
-        case '#' : buf->type = HASH; buf->col++; next_ch(buf); break;
+        case '#' : {
+            buf->col++;
+            
+            /* Multi-line comments starting with #- and ending with -# */
+            if(next_ch_get(buf) == '-') {
+                do {
+                    buf->col++;
+                    next_ch(buf);
+                    if((this_ch(buf) == '-' && next_ch_get(buf) == '#') ||
+                        this_ch(buf) == '\0' || this_ch(buf) == EOF) { break; }
+                } while(true);
+            }
+            /* Single line comments starting with # and ending with \n */
+            else {
+                do {
+                    buf->col++;
+                    next_ch(buf);
+                    if((this_ch(buf) == '\n') || 
+                    (this_ch(buf) == '\0') || 
+                    (this_ch(buf) ==  EOF)) break;
+                }
+                while(true);
+            }
+
+            goto lexl;
+        }
         case ',' : buf->type = COMMA;buf->col++; next_ch(buf); break;
         case '\"' : case '\'': {
             /* String */

@@ -17,14 +17,12 @@
  *----------Enums------------
  */
 enum token_type {
-    HEX, BIN, NUM, REAL,
-
-    EOL, LBRAC, RBRAC, LPAREN, RPAREN,
+    NUM, REAL, STRING, IDENTIFIER,
+    
+    LBRAC, RBRAC, LPAREN, RPAREN,
     PLUS, MINUS, MULTI, DIV, MOD, POW,
-    GRT, LES, EQU, SEMI, COL, HASH, 
+    GRT, LES, EQU, SEMI, COL, 
     COMMA,
-
-    STRING, IDENTIFIER,
 
 	KWD_AND, KWD_BREAK, KWD_CONTINUE, KWD_DO,
     KWD_ELSE, KWD_FALSE, KWD_FOR, KWD_IF,
