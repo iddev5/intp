@@ -30,6 +30,14 @@ if(this_ch(buf)=='\n') { buf->col=1; buf->line++; }  \
 else { buf->col++; }                                 \
 buf->tok[times++] = next_ch(buf);        
 
+#define copy1(x)                                     \
+if(times >= cap) {                                   \
+    cap += 4; buf->tok = realloc(buf->tok, cap);     \
+}                                                    \
+if(this_ch(buf)=='\n') { buf->col=1; buf->line++; }  \
+else { buf->col++; }                                 \
+buf->tok[times++] = x;
+
 int intp_lex(intp_src_buf *buf) {
     buf->type = -1;
 lexl:
@@ -69,6 +77,17 @@ lexl:
                  * character is \ i.e escape sequence. If so then continue 
                  * copying else break
                  */
+                
+                /* Deal with escape-sequences. (More to be added) */
+                if(this_ch(buf) == '\\') {
+                    next_ch(buf);
+                    switch(this_ch(buf)) {
+                        case 'n': copy1('\n'); next_ch(buf); break;
+                        case 't': copy1('\t'); next_ch(buf); break;
+                    }
+                }
+
+                /* End the string */
                 if(this_ch(buf) == '\"' || this_ch(buf) == '\'') {
                     if(prev_ch(buf) == '\\') { copy; }
                     else { next_ch(buf); break; }
