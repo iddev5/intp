@@ -211,7 +211,7 @@ lexl:
         case '5' : case '6': case '7': case '8': case '9': {
             int base = 10;
             
-            int64_t num  = 0.0f; /* For std(base-10), hex, bin and oct */
+            real_t num  = 0.0f; /* For std(base-10), hex, bin and oct */
             //real_t real = 0.0f;
 
             if(this_ch(buf) == '0') {
@@ -258,15 +258,11 @@ lexl:
                     pow *= base;
                 }
                 num += append/pow;
-                buf->real = num;
-                buf->type = REAL;
-                break;
             }
-            else {
-                buf->num = num;
-                buf->type = NUM;
-                break;
-            }
+            
+            buf->num = num;
+            buf->type = NUM;
+            break;
         }
         default: {
             /* Identifier/Keywords */

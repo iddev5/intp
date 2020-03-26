@@ -37,15 +37,10 @@ intp_data *NEW_DATA(const char *name, int type, void *value) {
 
     switch(data->type) {
         case NUM_T: { 
-            int64_t *num = (int64_t*)value;
+            real_t *num = ALLOC(real_t, 1);
+            num = (real_t*)value;
             data->val.num = *num;
             break; 
-        }
-
-        case REAL_T: {
-            real_t *real = (real_t*)value;
-            data->val.real = *real;
-            break;
         }
 
         case STR_T: {

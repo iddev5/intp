@@ -26,10 +26,6 @@ intp_data *atom(intp_src_buf *buf, intp_info *info) {
             to_return = NEW_DATA("", NUM_T, &buf->num); 
             intp_lex(buf); break;
         }
-        case REAL: {
-            to_return = NEW_DATA("", REAL_T, &buf->real);
-            intp_lex(buf); break;
-        }
         case STRING: {
             to_return = NEW_DATA("", STR_T, buf->tok); 
             intp_lex(buf); break;
@@ -66,8 +62,8 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
         /* Compute the values */
         real_t val0, val1;
 
-        val0 = (lhs->type == NUM_T) ? (real_t)lhs->val.num : lhs->val.real;
-        val1 = (rhs->type == NUM_T) ? (real_t)rhs->val.num : rhs->val.real;
+        val0 = lhs->val.num;
+        val1 = rhs->val.num;
 
         switch(bin_op) {
             case PLUS : val = val0 + val1; break;
@@ -79,36 +75,31 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
                 break;
             }
             case MOD  : {
-                if(val1 != 0) { val = (int)val0 % (int)val1; }
+                if(val1 != 0) { val = (int64_t)val0 % (int64_t)val1; }
                 else { intp_error(buf, "Division by zero"); }
                 break;
             }
             case POW  : {
                 val = 1;
-                for(int i = 0; i < (int)val1; i++) {
+                for(int i = 0; i < (int64_t)val1; i++) {
                     val *= val0;
                 }
-                printf("val = %Lf\n", val);
                 break;
             }  
         }
-        if(lhs->type == NUM_T) {
-            int64_t vali = (int64_t)val;
-            lhs = NEW_DATA("", NUM_T, &vali);
-        }
-        else {
-            lhs = NEW_DATA("", NUM_T, &val);
-        }
+        
+        lhs = NEW_DATA("", NUM_T, &val);
     }
+
 }
 
 /* sum ::= atom [+|- atom] ... */
 intp_data *sum(intp_src_buf *buf, intp_info *info) {
     intp_data *x, *to_return;
     x = atom(buf, info);
-
+    
     switch(x->type) {
-        case NUM_T: case REAL_T: to_return = rhs_expr(0, x, buf, info); break;
+        case NUM_T: to_return = rhs_expr(0, x, buf, info); break;
         case STR_T: {
             int type = buf->type;
             intp_data *y;

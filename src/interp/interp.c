@@ -40,8 +40,7 @@ void stmt(intp_src_buf *buf, intp_info *info) {
                 val = expr(buf, info);
                 
                 switch(val->type) {
-                    case NUM_T : { printf("%ld", val->val.num); break; }
-                    case REAL_T: { printf("%Lf", val->val.real); break; }
+                    case NUM_T : { printf("%Lf", val->val.num); break; }
                     case STR_T : {
                         if(!strcmp(val->val.str, "\\n")) { printf("\n"); }
                         else if(!strcmp(val->val.str, "\\t")) { printf("\t"); }
@@ -71,8 +70,7 @@ void intp_interp(intp_src_buf *buf, intp_info* info) {
     for(int i = 0; i < stbds_arrlen(info->objs); i++) {
         intp_data *var = info->objs[i];
         switch(var->type) {
-            case NUM_T : { printf("%s = %ld\n", var->name, var->val.num);  break; }
-            case REAL_T: { printf("%s = %Lf\n", var->name, var->val.real); break; }
+            case NUM_T : { printf("%s = %Lf\n", var->name, var->val.num);  break; }
             case STR_T : { printf("%s = %s\n" , var->name, var->val.str);  break; }
         }
         

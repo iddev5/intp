@@ -36,7 +36,7 @@ enum token_type {
 };
 
 enum data_type {
-    NUM_T, REAL_T, STR_T
+    NUM_T, STR_T
 };
 
 /*
@@ -50,8 +50,7 @@ typedef struct intp_data {
     uint32_t scope;
     
     union {
-        int64_t num;
-        long double real;
+        real_t num;
         char *str;
     } val;
 
@@ -63,8 +62,7 @@ typedef struct intp_src_buf {
 	int32_t type;
 
     char *tok;
-    int64_t num;
-    long double real;
+    real_t num;
     
 } intp_src_buf;
 
