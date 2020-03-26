@@ -179,24 +179,34 @@ lexl:
             next_ch(buf); buf->col++; /* Eat " or ' */
 
             while(this_ch(buf) != '\0') {
-                /* If an ' or " is encountered then check if the previous
-                 * character is \ i.e escape sequence. If so then continue 
-                 * copying else break
-                 */
-                
-                /* Deal with escape-sequences. (More to be added) */
+                /* Deal with escape-sequences. */
                 if(this_ch(buf) == '\\') {
                     next_ch(buf);
                     switch(this_ch(buf)) {
-                        case 'n': copy1('\n'); next_ch(buf); break;
-                        case 't': copy1('\t'); next_ch(buf); break;
+                        case '\\': copy1('\\'); break;
+                        case '\'': copy1('\''); break;
+                        case '\"': copy1('\"'); break;
+                        case 'a': copy1('\a'); break;
+                        case 'b': copy1('\b'); break;
+                        case 'f': copy1('\f'); break;
+                        case 'n': copy1('\n'); break;
+                        case 'r': copy1('\r'); break;
+                        case 't': copy1('\t'); break;
+                        case 'v': copy1('\v'); break;
+                        case '0': break;            /* To do: Octal   */
+                        case 'x': case 'X': break;  /* To do: Hex     */
+                        case 'u': break;            /* To do: Unicode */
+                        default: copy1(this_ch(buf)); break;
                     }
+                    next_ch(buf);
+                    continue;
                 }
 
                 /* End the string */
+                
+                /* If an ' or " is encountered then break */
                 if(this_ch(buf) == '\"' || this_ch(buf) == '\'') {
-                    if(prev_ch(buf) == '\\') { copy; }
-                    else { next_ch(buf); break; }
+                    next_ch(buf); break;
                 }
 
                 if(this_ch(buf) == '\0' || this_ch(buf) == EOF)
