@@ -54,8 +54,12 @@ lexl:
         case '}' : buf->type = RBRAC;  buf->col++; next_ch(buf); break;
         case '(' : buf->type = LPAREN; buf->col++; next_ch(buf); break;
         case ')' : buf->type = RPAREN; buf->col++; next_ch(buf); break;
-        case ';' : buf->type = SEMI; buf->col++; next_ch(buf); break;
-        case ':' : buf->type = COL;  buf->col++; next_ch(buf); break;
+        case '[' : buf->type = LSQR;   buf->col++; next_ch(buf); break;
+        case ']' : buf->type = RSQR;   buf->col++; next_ch(buf); break;
+        case ';' : buf->type = SEMI;   buf->col++; next_ch(buf); break;
+        case ':' : buf->type = COL;    buf->col++; next_ch(buf); break;
+        case ',' : buf->type = COMMA;  buf->col++; next_ch(buf); break;
+        case '?' : buf->type = QUES;   buf->col++; next_ch(buf); break;
         case '+' : {
             buf->col++; 
             next_ch(buf); 
@@ -81,7 +85,13 @@ lexl:
             next_ch(buf); 
             
             if(this_ch(buf) == '=') { buf->type = MULEQU;   buf->col++; next_ch(buf); }
-            else if(this_ch(buf) == '*') { buf->type = POW; buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '*') {
+                buf->col++; 
+                next_ch(buf); 
+
+                if(this_ch(buf) == '=') { buf->type = POWEQU; buf->col++; next_ch(buf); }    
+                else { buf->type = POW; }
+            }
             else { buf->type = MULTI; }
 
             break;
@@ -91,7 +101,13 @@ lexl:
             next_ch(buf); 
 
             if(this_ch(buf) == '=') { buf->type = DIVEQU;     buf->col++; next_ch(buf); }
-            else if(this_ch(buf) == '/') { buf->type = FLOOR; buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '/') {
+                buf->col++; 
+                next_ch(buf); 
+
+                if(this_ch(buf) == '=') { buf->type = FLOOREQU; buf->col++; next_ch(buf); }    
+                else { buf->type = FLOOR; }
+            }
             else { buf->type = DIV; }
 
             break;
@@ -118,8 +134,14 @@ lexl:
             buf->col++; 
             next_ch(buf); 
 
-            if(this_ch(buf) == '=') { buf->type = GRTEQU;      buf->col++; next_ch(buf); }
-            else if(this_ch(buf) == '>') { buf->type = RSHIFT; buf->col++; next_ch(buf); }
+            if(this_ch(buf) == '=') { buf->type = GRTEQU; buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '>') { 
+                buf->col++; 
+                next_ch(buf); 
+                
+                if(this_ch(buf) == '=') { buf->type = RSHEQU; buf->col++; next_ch(buf); }
+                else { buf->type = RSHIFT; }
+            }
             else { buf->type = GRT; }
             
             break;
@@ -128,8 +150,14 @@ lexl:
             buf->col++; 
             next_ch(buf); 
 
-            if(this_ch(buf) == '=') { buf->type = LESEQU;      buf->col++; next_ch(buf); }
-            else if(this_ch(buf) == '<') { buf->type = LSHIFT; buf->col++; next_ch(buf); }
+            if(this_ch(buf) == '=') { buf->type = LESEQU; buf->col++; next_ch(buf); }
+            else if(this_ch(buf) == '<') {  
+                buf->col++; 
+                next_ch(buf); 
+
+                if(this_ch(buf) == '=') { buf->type = LSHEQU, buf->col++; next_ch(buf); }
+                else { buf->type = LSHIFT; }
+            }
             else { buf->type = LES; }
             
             break;
@@ -138,8 +166,44 @@ lexl:
             buf->col++; 
             next_ch(buf); 
             
-            if(this_ch(buf) == '=') { buf->type = COMPARE; buf->col++; next_ch(buf); }
+            if(this_ch(buf) == '=') { buf->type = COMP; buf->col++; next_ch(buf); }
             else { buf->type = EQU; }
+
+            break;
+        }
+        case '!' : {
+            buf->col++;
+            next_ch(buf);
+
+            if(this_ch(buf) == '=') { buf->type = NOTEQU; buf->col++; next_ch(buf); }
+            else { buf->type = NOT; }
+
+            break;
+        } 
+        case '~' : {
+            buf->col++;
+            next_ch(buf);
+
+            if(this_ch(buf) == '=') { buf->type = BNOTEQU; buf->col++; next_ch(buf); }
+            else { buf->type = BNOT; }
+
+            break;
+        }
+        case '&' : {
+            buf->col++;
+            next_ch(buf);
+
+            if(this_ch(buf) == '=') { buf->type = BANDEQU; buf->col++; next_ch(buf); }
+            else { buf->type = BAND; }
+
+            break;
+        }
+        case '|' : {
+            buf->col++;
+            next_ch(buf);
+
+            if(this_ch(buf) == '=') { buf->type = BOREQU; buf->col++; next_ch(buf); }
+            else { buf->type = BOR; }
 
             break;
         }
@@ -169,7 +233,6 @@ lexl:
 
             goto lexl;
         }
-        case ',' : buf->type = COMMA;buf->col++; next_ch(buf); break;
         case '\"' : case '\'': {
             /* String */
 
@@ -296,9 +359,13 @@ lexl:
 
                 /* Check for keyword */
                 for(int i=0; i<sizeof(keywords)/sizeof(char*); i++) {
-                    if(!strcmp(buf->tok, keywords[i])) { buf->type = KWD_AND + i; }
+                    if(!strcmp(buf->tok, keywords[i])) { buf->type = KWD_AND + i; goto _break; }
                 }
 
+                if(!strcmp(buf->tok, "and")) { buf->type = AND; }
+                else if(!strcmp(buf->tok, "or")) { buf->type = OR; }
+
+_break:
                 break;
             }
             /* Deactivated because of errors. To be fixed

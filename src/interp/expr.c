@@ -4,14 +4,27 @@
 int get_binop_prec(intp_src_buf *buf) {
     int prec = -1;
     switch(buf->type) {
-        case PLUS : prec = 5; break;
-        case MINUS: prec = 5; break;
-        case MULTI: prec = 6; break; 
-        case DIV  : prec = 6; break;
-        case MOD  : prec = 6; break;
-        case POW  : prec = 7; break;
-        case GRT  : prec = 10; break;
-        case LES  : prec = 10; break;
+        /* Subject to change */
+        case COMMA: prec = 1; break;
+        case EQU:    case PLUSEQU:  case MINEQU:
+        case MULEQU: case DIVEQU:   case MODEQU:
+        case POWEQU: case FLOOREQU: case LSHEQU: 
+        case RSHEQU: case BANDEQU:  case XOREQU: 
+        case BOREQU: prec = 2; break;
+        case OR:   prec = 4; break;
+        case AND:  prec = 5; break;
+        case BOR:  prec = 6; break;
+        case XOR:  prec = 7; break;
+        case BAND: prec = 8; break;
+        case COMP: case NOTEQU: prec = 9; break;
+        case GRT:  case GRTEQU: 
+        case LES:  case LESEQU: prec = 10; break;
+        case LSHIFT: case RSHIFT: prec = 11; break; 
+        case PLUS :  case MINUS:  prec = 12; break;
+        case MULTI:  case DIV: 
+        case FLOOR:  case MOD: prec = 13; break;
+        case POW: prec = 14; break; 
+        case INC: case DEC: prec = 16; break;
     }
 
     return prec;
@@ -69,23 +82,30 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
             case PLUS : val = val0 + val1; break;
             case MINUS: val = val0 - val1; break;
             case MULTI: val = val0 * val1; break;
-            case DIV  : {
+            case DIV: case FLOOR: {
                 if(val1 != 0) { val = val0 / val1; }
-                else { intp_error(buf, "Division by zero"); } 
+                else { intp_error(buf, "Division by zero"); }
+                if(bin_op == FLOOR) { 
+                    val = (int64_t)(val < 0 ? (val - 0.5) : (val + 0.5));
+                } 
                 break;
             }
-            case MOD  : {
+            case MOD: {
                 if(val1 != 0) { val = (int64_t)val0 % (int64_t)val1; }
                 else { intp_error(buf, "Division by zero"); }
                 break;
             }
-            case POW  : {
+            case POW: {
                 val = 1;
                 for(int i = 0; i < (int64_t)val1; i++) {
                     val *= val0;
                 }
                 break;
             }  
+            case GRT : val = val0 > val1;  break;
+            case LES : val = val0 < val1;  break;
+            case COMP: val = val0 == val1; break;
+
         }
         
         lhs = NEW_DATA("", NUM_T, &val);

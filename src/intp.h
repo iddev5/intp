@@ -17,21 +17,43 @@
  *----------Enums------------
  */
 enum token_type {
-    NUM, REAL, STRING, IDENTIFIER,
+    /* Standard types */
+    NUM, STRING, IDENTIFIER,
     
-    LBRAC, RBRAC, LPAREN, RPAREN,
-    SEMI, COL, COMMA,
-    PLUS, MINUS, MULTI, DIV, MOD, POW, FLOOR,
-    XOR, LSHIFT, RSHIFT, 
-    INC, DEC, GRT, LES, EQU, 
-    COMPARE, PLUSEQU, MINEQU, MULEQU, DIVEQU, 
-    MODEQU, XOREQU, GRTEQU, LESEQU, 
 
+    /* Operators and Symbols */
+    LBRAC, RBRAC, LPAREN, RPAREN, LSQR, RSQR,
+    SEMI, COL, COMMA, QUES,
+    
+    /* Arithmetic operators */
+    PLUS, MINUS, MULTI, DIV, MOD, POW, FLOOR, 
+    
+    /* Relational operators */
+    GRT, GRTEQU, LES, LESEQU, COMP, NOTEQU, 
+    
+    /* Logical operators */
+    NOT, AND, OR, 
+
+    /* Bitwise operators */
+    XOR, BNOT, BAND, BOR, LSHIFT, RSHIFT, 
+
+    /* Unary operators */
+    INC, DEC,   
+
+    /* Assignment operators */
+    EQU, PLUSEQU, MINEQU, MULEQU, DIVEQU, 
+    MODEQU, POWEQU, FLOOREQU, XOREQU, BNOTEQU, 
+    BANDEQU, BOREQU, LSHEQU, RSHEQU, 
+
+
+    /* Keywords */
 	KWD_AND, KWD_BREAK, KWD_CONTINUE, KWD_DO,
     KWD_ELSE, KWD_FALSE, KWD_FOR, KWD_IF,
     KWD_IN, KWD_IMPORT, KWD_OR, KWD_RETURN,
     KWD_TRUE, KWD_WHILE,
 
+
+    /* Temporary commands/keywords/functions */
     TMP_PUTS
 };
 
