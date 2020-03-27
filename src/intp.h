@@ -1,17 +1,28 @@
-#ifndef INTP_MAIN_H
-#define INTP_MAIN_H
+#ifndef INTP_H
+#define INTP_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <ctype.h>
 
 #define STBDS_NO_SHORT_NAMES
 #include "../depends/stb_ds.h"
 
 #define INTP_DEBUG
+
+/*
+ * Types
+ */
+ 
+#ifdef INTP_SHORT_TYPES
+    typedef int32_t num_t;
+    typedef double  real_t;
+#else
+    typedef int64_t     num_t;
+    typedef long double real_t;
+#endif
 
 /*
  *----------Enums------------
@@ -50,11 +61,13 @@ enum token_type {
 	KWD_AND, KWD_BREAK, KWD_CONTINUE, KWD_DO,
     KWD_ELSE, KWD_FALSE, KWD_FOR, KWD_IF,
     KWD_IN, KWD_IMPORT, KWD_OR, KWD_RETURN,
-    KWD_TRUE, KWD_WHILE,
+    KWD_TRUE, KWD_WHILE
 
-
+#ifdef INTP_DEBUG
+    ,
     /* Temporary commands/keywords/functions */
     TMP_PUTS
+#endif
 };
 
 enum data_type {
@@ -64,7 +77,6 @@ enum data_type {
 /*
  *----------Structs-----------
  */
-typedef long double real_t;
 
 typedef struct intp_data {
     char *name;

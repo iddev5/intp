@@ -85,9 +85,7 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
             case DIV: case FLOOR: {
                 if(val1 != 0) { val = val0 / val1; }
                 else { intp_error(buf, "Division by zero"); }
-                if(bin_op == FLOOR) { 
-                    val = (int64_t)(val < 0 ? (val - 0.5) : (val + 0.5));
-                } 
+                if(bin_op == FLOOR) { val = FLOORf(val); } 
                 break;
             }
             case MOD: {
@@ -95,22 +93,14 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
                 else { intp_error(buf, "Division by zero"); }
                 break;
             }
-            case POW: {
-                val = 1;
-                for(int i = 0; i < (int64_t)val1; i++) {
-                    val *= val0;
-                }
-                break;
-            }  
+            case POW : val = POWf(val0, val1); break;  
             case GRT : val = val0 > val1;  break;
             case LES : val = val0 < val1;  break;
             case COMP: val = val0 == val1; break;
 
         }
-        
         lhs = NEW_DATA("", NUM_T, &val);
     }
-
 }
 
 /* sum ::= atom [+|- atom] ... */
@@ -134,7 +124,6 @@ intp_data *sum(intp_src_buf *buf, intp_info *info) {
                 strcat(x->val.str, y->val.str);
                 type = buf->type;
             }
-
             to_return = x; 
         }
     }

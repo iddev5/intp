@@ -91,6 +91,7 @@ void stmt(intp_src_buf *buf, intp_info *info) {
 
             break;
         }
+#ifdef INTP_DEBUG
         case TMP_PUTS: {
             intp_data *val;
 
@@ -113,6 +114,7 @@ void stmt(intp_src_buf *buf, intp_info *info) {
 
             check_semi(buf, info);
         }
+#endif
     }
 }
 

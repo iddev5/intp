@@ -19,9 +19,9 @@ release() {
     gcc -Wall -O2 -c ../../src/interp/expr.c -o object/release/interp/expr.o
     gcc -Wall -O2 -c ../../src/interp/interp.c -o object/release/interp/interp.o
     gcc -Wall -O2 -c ../../src/core.c -o object/release/core.o
-    gcc -Wall -O2 -c ../../src/main.c -o object/release/main.o
+    gcc -Wall -O2 -c ../../intpcli.c -o object/release/intpcli.o
 
-    gcc -o bin/release/intp object/release/main.o object/release/log.o object/release/lexer.o object/release/data.o object/release/interp/expr.o object/release/interp/interp.o object/release/core.o -s -O2
+    gcc -o bin/release/intp object/release/intpcli.o object/release/log.o object/release/lexer.o object/release/data.o object/release/interp/expr.o object/release/interp/interp.o object/release/core.o -s -O2
 
     echo "Build ended."
 }
@@ -35,9 +35,9 @@ debug() {
     gcc -Wall -g -c ../../src/interp/expr.c -o object/debug/interp/expr.o
     gcc -Wall -g -c ../../src/interp/interp.c -o object/debug/interp/interp.o
     gcc -Wall -g -c ../../src/core.c -o object/debug/core.o
-    gcc -Wall -g -c ../../src/main.c -o object/debug/main.o
+    gcc -Wall -g -c ../../intpcli.c -o object/debug/intpcli.o
 
-    gcc -o bin/debug/intp object/debug/main.o object/debug/log.o object/debug/lexer.o object/debug/data.o object/debug/interp/interp.o object/debug/interp/expr.o object/debug/core.o
+    gcc -o bin/debug/intp object/debug/intpcli.o object/debug/log.o object/debug/lexer.o object/debug/data.o object/debug/interp/interp.o object/debug/interp/expr.o object/debug/core.o
 
     echo "Build ended."
 }
