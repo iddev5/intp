@@ -18,16 +18,75 @@ void stmt(intp_src_buf *buf, intp_info *info) {
             intp_data *val;
             char *name = NEW_STRING(buf->tok);
             
-            intp_lex(buf);
+            int type = intp_lex(buf);
 
             /* Variable assignment */
-            if(buf->type == EQU) { 
+            if(type >= EQU && type <= RSHEQU) {
                 intp_lex(buf); /* Eat = */
                 val = expr(buf, info);
                 val->name = name;
-                intp_set_data_from(info, val);
 
+                if(type == EQU) {
+                    intp_set_data_from(info, val);
+                } 
+                else {
+                    intp_data *data = intp_get_data(info, val->name);
+                    
+                    /* WIP Section */
+                    switch(type) {
+                        case PLUSEQU: { 
+                            if(data->type == val->type) {
+                                if(data->type == STR_T) { strcat(data->val.str, val->val.str); }
+                                else if(data->type == NUM_T) { data->val.num += val->val.num; }
+                                else { intp_error(buf, "Operands are of unknown type"); }
+                            }
+                            else { intp_error(buf, "Operands are of different type"); } 
+                            break; 
+                        }
+                        case MINEQU: { 
+                            if(data->type == val->type) {
+                                if(data->type == NUM_T) { data->val.num -= val->val.num; }
+                                else { intp_error(buf, "Operands are of unknown type"); }
+                            }
+                            else { intp_error(buf, "Operands are of different type"); } 
+                            break; 
+                        }
+                        case MULEQU: { 
+                            if(data->type == val->type) {
+                                if(data->type == NUM_T) { data->val.num *= val->val.num; }
+                                else { intp_error(buf, "Operands are of unknown type"); }
+                            }
+                            else { intp_error(buf, "Operands are of different type"); } 
+                            break; 
+                        }
+                        case DIVEQU: { 
+                            if(data->type == val->type) {
+                                if(data->type == NUM_T) { data->val.num /= val->val.num; }
+                                else { intp_error(buf, "Operands are of unknown type"); }
+                            }
+                            else { intp_error(buf, "Operands are of different type"); } 
+                            break; 
+                        }
+                        case MODEQU: { 
+                            if(data->type == val->type) {
+                                if(data->type == NUM_T) { data->val.num = (int64_t)data->val.num % (int64_t)val->val.num; }
+                                else { intp_error(buf, "Operands are of unknown type"); }
+                            }
+                            else { intp_error(buf, "Operands are of different type"); } 
+                            break; 
+                        }
+                        case POWEQU:
+                        case FLOOREQU:
+                        case XOREQU: 
+                        case BNOTEQU:
+                        case BANDEQU:
+                        case BOREQU: 
+                        case LSHEQU: 
+                        case RSHEQU: break;
+                    }
+                }
                 check_semi(buf, info);
+            
             }
 
             break;
