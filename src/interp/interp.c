@@ -33,63 +33,39 @@ void stmt(intp_src_buf *buf, intp_info *info) {
                     intp_data *data = intp_get_data(info, val->name);
                     
                     /* WIP Section */
-                    switch(type) {
-                        case PLUSEQU: { 
-                            if(data->type == val->type) {
-                                if(data->type == STR_T) { strcat(data->val.str, val->val.str); }
-                                else if(data->type == NUM_T) { data->val.num += val->val.num; }
-                                else { intp_error(buf, "Operands are of unknown type"); }
-                            }
-                            else { intp_error(buf, "Operands are of different type"); } 
-                            break; 
+                    if(data->type == val->type) {
+                        if(data->type == STR_T) {
+                            if(type == PLUSEQU) { strcat(data->val.str, val->val.str); }
+                            else { intp_error(buf, "Invalid operation for string"); }
                         }
-                        case MINEQU: { 
-                            if(data->type == val->type) {
-                                if(data->type == NUM_T) { data->val.num -= val->val.num; }
-                                else { intp_error(buf, "Operands are of unknown type"); }
+                        else if(data->type == NUM_T) {
+                            switch(type) {
+                                case PLUSEQU: data->val.num += val->val.num; break;
+                                case MINEQU : data->val.num -= val->val.num; break;
+                                case MULEQU : data->val.num *= val->val.num; break;
+                                case DIVEQU : case FLOOREQU:
+                                    if(val->val.num != 0) { data->val.num /= val->val.num; }
+                                    if(type == FLOOREQU) { data->val.num = FLOORf(data->val.num); }
+                                    else { intp_error(buf, "Division by zero"); } break;
+                                case POWEQU: data->val.num = POWf(data->val.num, val->val.num); break;
+                                case MODEQU: 
+                                    if(val != 0) { data->val.num = (int64_t)data->val.num % (int64_t)val->val.num; }
+                                    else { intp_error(buf, "Division by zero"); } break;
+                                    break;
+                                case XOREQU: 
+                                case BNOTEQU:
+                                case BANDEQU:
+                                case BOREQU: 
+                                case LSHEQU: 
+                                case RSHEQU: break;
                             }
-                            else { intp_error(buf, "Operands are of different type"); } 
-                            break; 
                         }
-                        case MULEQU: { 
-                            if(data->type == val->type) {
-                                if(data->type == NUM_T) { data->val.num *= val->val.num; }
-                                else { intp_error(buf, "Operands are of unknown type"); }
-                            }
-                            else { intp_error(buf, "Operands are of different type"); } 
-                            break; 
-                        }
-                        case DIVEQU: { 
-                            if(data->type == val->type) {
-                                if(data->type == NUM_T) { data->val.num /= val->val.num; }
-                                else { intp_error(buf, "Operands are of unknown type"); }
-                            }
-                            else { intp_error(buf, "Operands are of different type"); } 
-                            break; 
-                        }
-                        case MODEQU: { 
-                            if(data->type == val->type) {
-                                if(data->type == NUM_T) { data->val.num = (int64_t)data->val.num % (int64_t)val->val.num; }
-                                else { intp_error(buf, "Operands are of unknown type"); }
-                            }
-                            else { intp_error(buf, "Operands are of different type"); } 
-                            break; 
-                        }
-                        case POWEQU:
-                        case FLOOREQU:
-                        case XOREQU: 
-                        case BNOTEQU:
-                        case BANDEQU:
-                        case BOREQU: 
-                        case LSHEQU: 
-                        case RSHEQU: break;
                     }
+                    else { intp_error(buf, "Operands are of different type"); }
                 }
                 check_semi(buf, info);
-            
-            }
-
             break;
+            }
         }
 #ifdef INTP_DEBUG
         case TMP_PUTS: {
