@@ -97,7 +97,7 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
             case GRT : val = val0 > val1;  break;
             case LES : val = val0 < val1;  break;
             case COMP: val = val0 == val1; break;
-
+            default: intp_error(buf, "Invalid operator"); break;
         }
         lhs = NEW_DATA("", NUM_T, &val);
     }

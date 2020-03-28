@@ -51,13 +51,14 @@ void intp_string(intp_info *info , char *str) {
         intp_error_std("Cannot read input string");
     }
 
+    info->buf->filename = NEW_STRING("<string>");
     intp_interp(info->buf, info);
 }
 
 void intp_file(intp_info *info, char *fn) {
     FILE *file = fopen(fn, "r");
     if(file == NULL) {
-        printf("Cannot open input file: %s\n", fn); exit(-1);
+        intp_error_std("Cannot open input file: ", fn);
     }
 
     /* Get the size of the file */
@@ -67,7 +68,7 @@ void intp_file(intp_info *info, char *fn) {
 
     /* Check the size */
     if(size <= 0) {
-        printf("Fatal Error: Invalid size of input file: %s\n", fn); exit(-1);
+        intp_error_std("Fatal Error: Invalid size of input file: ", fn);
     }
 
     /* Allocate memory */
@@ -83,6 +84,7 @@ void intp_file(intp_info *info, char *fn) {
 
     fclose(file);
     info->buf->data[size+1] = '\0'; /* Append NULL termination */
+    info->buf->filename = NEW_STRING(fn);
     intp_interp(info->buf, info);
 }
 

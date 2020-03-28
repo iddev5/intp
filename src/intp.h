@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 #define STBDS_NO_SHORT_NAMES
 #include "../depends/stb_ds.h"
@@ -91,7 +92,9 @@ typedef struct intp_data {
 } intp_data;
 
 typedef struct intp_src_buf {
-	uint32_t line, col;
+    char *filename;
+	uint32_t line, col, len;
+
     char *data;
 	int32_t type;
 
@@ -125,7 +128,7 @@ void intp_interp(intp_src_buf *buf, intp_info *info);
  */
 void intp_warn(intp_src_buf *buf, char *str);
 int  intp_error(intp_src_buf *buf, char *str);
-int  intp_error_std(char *str);
+int  intp_error_std(char *str, ...);
 
 /*
  *----------Data Types--------
