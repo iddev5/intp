@@ -5,14 +5,9 @@ int get_binop_prec(intp_src_buf *buf) {
     int prec = -1;
     switch(buf->type) {
         /* Subject to change */
-        case COMMA: prec = 1; break;
-        case EQU:    case PLUSEQU:  case MINEQU:
-        case MULEQU: case DIVEQU:   case MODEQU:
-        case POWEQU: case FLOOREQU: case LSHEQU: 
-        case RSHEQU: case BANDEQU:  case XOREQU: 
-        case BOREQU: prec = 2; break;
-        case OR:   prec = 4; break;
-        case AND:  prec = 5; break;
+        case WAL: prec = 3; break;
+        case KWD_OR:   prec = 4; break;
+        case KWD_AND:  prec = 5; break;
         case BOR:  prec = 6; break;
         case XOR:  prec = 7; break;
         case BAND: prec = 8; break;
@@ -24,7 +19,7 @@ int get_binop_prec(intp_src_buf *buf) {
         case MULTI:  case DIV: 
         case FLOOR:  case MOD: prec = 13; break;
         case POW: prec = 14; break; 
-        case INC: case DEC: prec = 16; break;
+        /*case INC: case DEC: prec = 16; break;*/
     }
 
     return prec;
@@ -97,6 +92,15 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
             case GRT : val = val0 > val1;  break;
             case LES : val = val0 < val1;  break;
             case COMP: val = val0 == val1; break;
+            case GRTEQU: val = val0 >= val1; break;
+            case LESEQU: val = val0 <= val1; break; 
+            case KWD_AND: val = val0 && val1; break;
+            case KWD_OR : val = val0 || val1; break;
+            case WAL: {
+                /* Not working properly */
+                intp_set_data(info, lhs->name, rhs->type, &val1); 
+                val = val1; break;
+            }
             default: intp_error(buf, "Invalid operator"); break;
         }
         lhs = NEW_DATA("", NUM_T, &val);

@@ -45,8 +45,6 @@ if(this_ch(buf)=='\n') { buf->col=1; buf->line++; }  \
 else { count; }                                      \
 buf->tok[times++] = x;
 
-/* To do: lexer init, lexer len count */
-
 int intp_lex(intp_src_buf *buf) {
     buf->type = -1;
 lexl:
@@ -62,7 +60,6 @@ lexl:
         case '[' : buf->type = LSQR;   count; next_ch(buf); break;
         case ']' : buf->type = RSQR;   count; next_ch(buf); break;
         case ';' : buf->type = SEMI;   count; next_ch(buf); break;
-        case ':' : buf->type = COL;    count; next_ch(buf); break;
         case ',' : buf->type = COMMA;  count; next_ch(buf); break;
         case '?' : buf->type = QUES;   count; next_ch(buf); break;
         case '+' : {
@@ -209,6 +206,15 @@ lexl:
 
             if(this_ch(buf) == '=') { buf->type = BOREQU; count; next_ch(buf); }
             else { buf->type = BOR; }
+
+            break;
+        }
+        case ':' : {
+            count; 
+            next_ch(buf); 
+            
+            if(this_ch(buf) == '=') { buf->type = WAL; count; next_ch(buf); }
+            else { buf->type = COL; }
 
             break;
         }
@@ -365,10 +371,6 @@ lexl:
                 for(int i=0; i<sizeof(keywords)/sizeof(char*); i++) {
                     if(!strcmp(buf->tok, keywords[i])) { buf->type = KWD_AND + i; goto _break; }
                 }
-
-                if(!strcmp(buf->tok, "and")) { buf->type = AND; }
-                else if(!strcmp(buf->tok, "or")) { buf->type = OR; }
-
 _break:
                 break;
             }

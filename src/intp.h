@@ -44,13 +44,16 @@ enum token_type {
     GRT, GRTEQU, LES, LESEQU, COMP, NOTEQU, 
     
     /* Logical operators */
-    NOT, AND, OR, 
+    NOT, /* AND and OR are keywords */
 
     /* Bitwise operators */
     XOR, BNOT, BAND, BOR, LSHIFT, RSHIFT, 
 
     /* Unary operators */
-    INC, DEC,   
+    INC, DEC,
+
+    /* Misc */
+    WAL,   
 
     /* Assignment operators */
     EQU, PLUSEQU, MINEQU, MULEQU, DIVEQU, 
