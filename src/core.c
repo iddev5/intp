@@ -21,6 +21,7 @@ int intp_init(intp_info *info) {
     }
 
     info->buf->line = info->buf->col = 1;
+    info->scope = 0; /* Global scope */
 
     return (info->buf->tok) ? 1 : 0;
 }

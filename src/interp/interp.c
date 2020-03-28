@@ -67,6 +67,22 @@ void stmt(intp_src_buf *buf, intp_info *info) {
             break;
             }
         }
+        case LBRAC: {
+            info->scope++;
+            intp_lex(buf);
+            break;
+        }
+        case RBRAC: {
+            long i = 0;
+            while(i < (stbds_arrlen(info->objs))) {
+                intp_data *data = info->objs[i];
+                if(info->scope == data->scope) { stbds_arrdel(info->objs, i); i--; } 
+                else { i++; }
+            }
+            info->scope--;
+            intp_lex(buf);
+            break;
+        }
 #ifdef INTP_DEBUG
         case TMP_PUTS: {
             intp_data *val;
@@ -107,8 +123,8 @@ void intp_interp(intp_src_buf *buf, intp_info* info) {
     for(int i = 0; i < stbds_arrlen(info->objs); i++) {
         intp_data *var = info->objs[i];
         switch(var->type) {
-            case NUM_T : { printf("%s = %Lf\n", var->name, var->val.num);  break; }
-            case STR_T : { printf("%s = %s\n" , var->name, var->val.str);  break; }
+            case NUM_T : { printf("%s = %Lf    scope = %u\n", var->name, var->val.num, var->scope);  break; }
+            case STR_T : { printf("%s = %s     scope = %u\n", var->name, var->val.str, var->scope);  break; }
         }
         
     }
