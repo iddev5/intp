@@ -11,50 +11,52 @@ void check_semi(intp_src_buf *buf, intp_info *info) {
     else { intp_lex(buf); }
 }
 
+void if_stmt(intp_src_buf *buf, intp_info *info) {
+    bool passed = false;
+    intp_data *cond;
+_else_if:   
+    intp_lex(buf);
+    cond = expr(buf, info); /* Condition of the If-statement */
+    if(cond->val.num > 0) {
+_else:
+        /* The statment can be a single statement or 
+         * a group of statements enclosed within { }
+         */
+        stmt(buf, info);
+        /* Now, we don't need to parse else if or else */
+        passed = true;
+    }
+    else {
+_skip:
+        /* If it is LBRAC then skip till RBRAC else skip till SEMI */
+         if(buf->type == LBRAC) { 
+               do { intp_lex(buf); } while(buf->type != RBRAC); intp_lex(buf); }
+        else { do { intp_lex(buf); } while(buf->type != SEMI);  intp_lex(buf); }
+    }
+
+    if(buf->type == KWD_ELSE) {
+        intp_lex(buf);
+        /* 'else if' */
+        if(buf->type == KWD_IF) { 
+            if(passed) {
+                /* First consume the conditional expr and then consume the rest using _skip */
+                while(buf->type != LBRAC) { intp_lex(buf); } 
+                goto _skip; 
+            } 
+            else { goto _else_if; } }
+        /* 'else' */
+        else { 
+            if(passed) { goto _skip; } 
+            else       { goto _else; } 
+        }
+    }
+
+    return;
+}
+
 void stmt(intp_src_buf *buf, intp_info *info) {
     switch(buf->type) {
-        case KWD_IF: {
-            bool passed = false;
-            intp_data *cond;
-_else_if:   
-            intp_lex(buf);
-            cond = expr(buf, info); /* Condition of the If-statement */
-            if(cond->val.num > 0) {
-_else:
-                /* The statment can be a single statement or 
-                 * a group of statements enclosed within { }
-                 */
-                stmt(buf, info);
-                /* Now, we don't need to parse else if or else */
-                passed = true;
-            }
-            else {
-_skip:
-                /* If it is LBRAC then skip till RBRAC else skip till SEMI */
-                if(buf->type == LBRAC) { 
-                       do { intp_lex(buf); } while(buf->type != RBRAC); intp_lex(buf); }
-                else { do { intp_lex(buf); } while(buf->type != SEMI);  intp_lex(buf); }
-            }
-
-            if(buf->type == KWD_ELSE) {
-                intp_lex(buf);
-                /* 'else if' */
-                if(buf->type == KWD_IF) { 
-                    if(passed) {
-                        /* First consume the conditional expr and then consume the rest using _skip */
-                        while(buf->type != LBRAC) { intp_lex(buf); } 
-                        goto _skip; 
-                    } 
-                    else { goto _else_if; } }
-                /* 'else' */
-                else { 
-                    if(passed) { goto _skip; } 
-                    else       { goto _else; } 
-                }
-            }
-
-            break; 
-        }
+        case KWD_IF: if_stmt(buf, info); break; 
 
         /* Variable declaration, function declaration, function call */
         case IDENTIFIER: {
@@ -135,6 +137,7 @@ _skip:
             intp_error(buf, "Unexpected RBRAC }");
             break;
         }
+
 #ifdef INTP_DEBUG
         case TMP_PUTS: {
             intp_data *val;

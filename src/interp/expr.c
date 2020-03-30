@@ -59,14 +59,10 @@ intp_data *unop_expr(intp_src_buf *buf, intp_info *info) {
 
         if(data->type == NUM_T) {
             switch(type) {
-                case MINUS: {
+                case MINUS: case NOT: {
                     real_t val = -(data->val.num);
                     to_return = NEW_DATA("", NUM_T, &val);
                     break;
-                }
-                case NOT: {
-                    real_t val = !(data->val.num);
-                    to_return = NEW_DATA("", NUM_T, &val);
                 }
                 /* Includes PLUS i.e do nothing */
                 default: { to_return = data; break; }
@@ -131,7 +127,8 @@ intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_inf
             case KWD_AND: val = val0 && val1; break;
             case KWD_OR : val = val0 || val1; break;
             case WAL: {
-                /* Not working properly */
+                /* Temporary hacky fix */
+                printf("%c\b \b", *lhs->name);
                 intp_set_data(info, lhs->name, rhs->type, &val1); 
                 val = val1; break;
             }
@@ -142,7 +139,7 @@ intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_inf
 }
 
 /* sum ::= atom [+|- atom] ... */
-intp_data *sum(intp_src_buf *buf, intp_info *info) {
+intp_data *operation(intp_src_buf *buf, intp_info *info) {
     intp_data *x, *to_return;
     x = unop_expr(buf, info);
     
@@ -187,6 +184,6 @@ intp_data *paren_expr(intp_src_buf *buf, intp_info *info) {
 /* expr ::= id = sum | sum */
 intp_data *expr(intp_src_buf *buf, intp_info *info) {
     intp_data *to_return;
-    to_return = sum(buf, info);
+    to_return = operation(buf, info);
     return to_return;
 }
