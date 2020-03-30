@@ -47,7 +47,41 @@ intp_data *atom(intp_src_buf *buf, intp_info *info) {
     return to_return;
 }
 
-intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info *info) {
+intp_data *unop_expr(intp_src_buf *buf, intp_info *info) {
+    int type = buf->type;
+    intp_data *to_return;
+
+    if(type == PLUS || type == MINUS || type == NOT) {
+        intp_data *data;
+
+        intp_lex(buf);
+        data = atom(buf, info);
+
+        if(data->type == NUM_T) {
+            switch(type) {
+                case MINUS: {
+                    real_t val = -(data->val.num);
+                    to_return = NEW_DATA("", NUM_T, &val);
+                    break;
+                }
+                case NOT: {
+                    real_t val = !(data->val.num);
+                    to_return = NEW_DATA("", NUM_T, &val);
+                }
+                /* Includes PLUS i.e do nothing */
+                default: { to_return = data; break; }
+            }
+        }
+        else { intp_error(buf, "Prefix unary operators are not supported with string"); }
+    }
+    else {
+        to_return = atom(buf, info);
+    }
+
+    return to_return;
+}
+
+intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info *info) {
     real_t val = 0;
 
     while(true) {
@@ -64,7 +98,7 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
 
         int next_prec = get_binop_prec(buf);
         if(tok_prec < next_prec) {
-            rhs = rhs_expr(tok_prec+1, rhs, buf, info);
+            rhs = binop_expr(tok_prec+1, rhs, buf, info);
         }
 
         /* Compute the values */
@@ -110,10 +144,10 @@ intp_data *rhs_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info 
 /* sum ::= atom [+|- atom] ... */
 intp_data *sum(intp_src_buf *buf, intp_info *info) {
     intp_data *x, *to_return;
-    x = atom(buf, info);
+    x = unop_expr(buf, info);
     
     switch(x->type) {
-        case NUM_T: to_return = rhs_expr(0, x, buf, info); break;
+        case NUM_T: to_return = binop_expr(0, x, buf, info); break;
         case STR_T: {
             int type = buf->type;
             intp_data *y;
