@@ -7,6 +7,7 @@ intp_data *intp_get_data(intp_info *info, char* name) {
             return data;
         }
     }
+    intp_error_std("Data not found: ");
     return (intp_data*)-1;
 }
 

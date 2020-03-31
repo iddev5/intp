@@ -11,6 +11,9 @@ void check_semi(intp_src_buf *buf, intp_info *info) {
     else { intp_lex(buf); }
 }
 
+/* Forward declaration */
+void stmt(intp_src_buf *buf, intp_info *info);
+
 void if_stmt(intp_src_buf *buf, intp_info *info) {
     bool passed = false;
     intp_data *cond;

@@ -18,8 +18,7 @@ int get_binop_prec(intp_src_buf *buf) {
         case PLUS :  case MINUS:  prec = 12; break;
         case MULTI:  case DIV: 
         case FLOOR:  case MOD: prec = 13; break;
-        case POW: prec = 14; break; 
-        /*case INC: case DEC: prec = 16; break;*/
+        case POW: prec = 14; break;
     }
 
     return prec;
@@ -127,10 +126,13 @@ intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_inf
             case KWD_AND: val = val0 && val1; break;
             case KWD_OR : val = val0 || val1; break;
             case WAL: {
-                /* Temporary hacky fix */
-                printf("%c\b \b", *lhs->name);
-                intp_set_data(info, lhs->name, rhs->type, &val1); 
-                val = val1; break;
+                intp_data *data = ALLOC(intp_data*, 1);
+                data->name = NEW_STRING(lhs->name);
+                data->type = rhs->type;
+                data->val.num = val1;
+                intp_set_data_from(info, data);
+                val = val1; 
+                break;
             }
             default: intp_error(buf, "Invalid operator"); break;
         }

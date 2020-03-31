@@ -365,6 +365,7 @@ lexl:
                         (this_ch(buf) >= '0' && this_ch(buf) <= '9') ||
                         (this_ch(buf) == '_'));
 
+                buf->tok[times+1] = '\0';
                 buf->type = IDENTIFIER;
 
                 /* Check for keyword */

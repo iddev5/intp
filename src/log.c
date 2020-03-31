@@ -13,7 +13,7 @@ int intp_error(intp_src_buf *buf, char *str) {
 
 int intp_error_std(char *str, ...) {
     va_list args;
-    printf("Fatal Error: ");
+    printf("Fatal Error: %s", str);
     va_start(args, str);
     printf("%s", va_arg(args, char*));
     va_end(args);
