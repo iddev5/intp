@@ -112,8 +112,8 @@ void stmt(intp_src_buf *buf, intp_info *info) {
                     else { intp_error(buf, "Operands are of different type"); }
                 }
                 check_semi(buf, info);
-            break;
             }
+            break;
         }
         case LBRAC: {
             info->scope++;
@@ -123,8 +123,8 @@ void stmt(intp_src_buf *buf, intp_info *info) {
                 if(buf->type == RBRAC) {  
                     long i = 0;
                     while(i < (stbds_arrlen(info->objs))) {
-                        intp_data *data = info->objs[i];
-                        if(info->scope == data->scope) { stbds_arrdel(info->objs, i); i--; } 
+                        intp_data data = *info->objs[i];
+                        if(info->scope == data.scope) { stbds_arrdel(info->objs, i); i--; } 
                         else { i++; }
                     }
                     info->scope--;
@@ -179,10 +179,10 @@ void intp_interp(intp_src_buf *buf, intp_info* info) {
 #ifdef INTP_DEBUG
     printf("===============VARIABLES===============\n");
     for(int i = 0; i < stbds_arrlen(info->objs); i++) {
-        intp_data *var = info->objs[i];
-        switch(var->type) {
-            case NUM_T : { printf("%s = %Lf    scope = %u\n", var->name, var->val.num, var->scope);  break; }
-            case STR_T : { printf("%s = %s     scope = %u\n", var->name, var->val.str, var->scope);  break; }
+        intp_data var = *info->objs[i];
+        switch(var.type) {
+            case NUM_T : { printf("%s = %Lf    scope = %u\n", var.name, var.val.num, var.scope);  break; }
+            case STR_T : { printf("%s = %s     scope = %u\n", var.name, var.val.str, var.scope);  break; }
         }
         
     }

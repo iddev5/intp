@@ -68,6 +68,7 @@ intp_data *unop_expr(intp_src_buf *buf, intp_info *info) {
             }
         }
         else { intp_error(buf, "Prefix unary operators are not supported with string"); }
+        free(data);
     }
     else {
         to_return = atom(buf, info);
@@ -78,6 +79,7 @@ intp_data *unop_expr(intp_src_buf *buf, intp_info *info) {
 
 intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info *info) {
     real_t val = 0;
+    intp_data *rhs;
 
     while(true) {
         int tok_prec = get_binop_prec(buf);
@@ -89,7 +91,7 @@ intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_inf
         int bin_op = buf->type;
         intp_lex(buf);
 
-        intp_data *rhs = atom(buf, info);
+        rhs = atom(buf, info);
 
         int next_prec = get_binop_prec(buf);
         if(tok_prec < next_prec) {
@@ -138,6 +140,7 @@ intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_inf
         }
         lhs = NEW_DATA("", NUM_T, &val);
     }
+    free(rhs);
 }
 
 /* sum ::= atom [+|- atom] ... */
@@ -161,7 +164,7 @@ intp_data *operation(intp_src_buf *buf, intp_info *info) {
                 strcat(x->val.str, y->val.str);
                 type = buf->type;
             }
-            to_return = x; 
+            to_return = x;
         }
     }
 
@@ -185,7 +188,5 @@ intp_data *paren_expr(intp_src_buf *buf, intp_info *info) {
 
 /* expr ::= id = sum | sum */
 intp_data *expr(intp_src_buf *buf, intp_info *info) {
-    intp_data *to_return;
-    to_return = operation(buf, info);
-    return to_return;
+    return operation(buf, info);
 }

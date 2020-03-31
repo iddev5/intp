@@ -3,6 +3,12 @@
 
 #include "src/intp.h"
 
+intp_info info;
+
+void intp_at_exit() {
+    intp_free(&info);
+}
+
 int main(int argc, char **argv) {
 
 	if(argc < 2) {
@@ -10,10 +16,9 @@ int main(int argc, char **argv) {
         exit(-1);
 	}
 
-    intp_info info;
+    atexit(intp_at_exit);
+    
     if(intp_init(&info)) {
         intp_file(&info, argv[1]);
     }
-    
-	intp_free(&info);
 }
