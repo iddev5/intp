@@ -99,3 +99,6 @@ char *NEW_STRING(const char *str) {
     strcpy(new, str);
     return new;
 }
+
+/* For supporting tcc */
+void __dso_handle(void) { }
