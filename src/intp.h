@@ -164,7 +164,9 @@ void intp_file(intp_info *info, char *fn);
 char *NEW_STRING(const char *str);
 intp_data *NEW_DATA(const char *name, int type, void *value);
 
-/* For supporting tcc */
-void __dso_handle(void);
+#ifdef __TINYC__
+    /* For supporting tcc */
+    void __dso_handle(void);
+#endif
 
 #endif

@@ -33,8 +33,8 @@ void intp_free(intp_info *info) {
 
     /* Free if it is not empty. */
     if(strlen(info->buf->data) != 0) { free(info->buf->data); }
-    if(strlen(info->buf->tok ) != 0) { free(info->buf->tok ); }
-    if(info->buf != NULL) { free(info->buf); }
+    free(info->buf->tok);
+    free(info->buf);
 
 #ifdef INTP_DEBUG
     printf("Dellocation completed.\n");
@@ -100,5 +100,7 @@ char *NEW_STRING(const char *str) {
     return new;
 }
 
-/* For supporting tcc */
-void __dso_handle(void) { }
+#ifdef __TINYC__
+    /* For supporting tcc */
+    void __dso_handle(void) { }
+#endif

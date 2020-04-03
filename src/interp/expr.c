@@ -48,7 +48,6 @@ intp_data *atom(intp_src_buf *buf, intp_info *info) {
 
 intp_data *unop_expr(intp_src_buf *buf, intp_info *info) {
     int type = buf->type;
-    intp_data *to_return;
 
     if(type == PLUS || type == MINUS || type == NOT) {
         intp_data *data;
@@ -59,22 +58,17 @@ intp_data *unop_expr(intp_src_buf *buf, intp_info *info) {
         if(data->type == NUM_T) {
             switch(type) {
                 case MINUS: case NOT: {
-                    real_t val = -(data->val.num);
-                    to_return = NEW_DATA("", NUM_T, &val);
-                    break;
+                    data->val.num = -(data->val.num); 
+                    return data; break; 
                 }
                 /* Includes PLUS i.e do nothing */
-                default: { to_return = data; break; }
+                default: { return data; break; }
             }
         }
         else { intp_error(buf, "Prefix unary operators are not supported with string"); }
-        free(data);
     }
-    else {
-        to_return = atom(buf, info);
-    }
-
-    return to_return;
+    
+    return atom(buf, info);
 }
 
 intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_info *info) {
@@ -145,11 +139,11 @@ intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_inf
 
 /* sum ::= atom [+|- atom] ... */
 intp_data *operation(intp_src_buf *buf, intp_info *info) {
-    intp_data *x, *to_return;
+    intp_data *x;
     x = unop_expr(buf, info);
     
     switch(x->type) {
-        case NUM_T: to_return = binop_expr(0, x, buf, info); break;
+        case NUM_T: return binop_expr(0, x, buf, info); break;
         case STR_T: {
             int type = buf->type;
             intp_data *y;
@@ -164,11 +158,10 @@ intp_data *operation(intp_src_buf *buf, intp_info *info) {
                 strcat(x->val.str, y->val.str);
                 type = buf->type;
             }
-            to_return = x;
+            return x;
         }
     }
-
-    return to_return;
+    return x;
 }
 
 /* paren_expr ::= ( expr )*/
