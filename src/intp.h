@@ -78,6 +78,11 @@ enum data_type {
     NUM_T, STR_T
 };
 
+enum input_type {
+    INPUT_FILE,
+    INPUT_STRING
+};
+
 /*
  *----------Structs-----------
  */
@@ -98,9 +103,13 @@ typedef struct intp_src_buf {
     char *filename;
 	uint32_t line, col, len;
 
-    char *data;
-	int32_t type;
+    int input;
+    union {
+        struct { char *data; };
+        struct { FILE *file; char th, pr; };
+    };
 
+    int32_t type;
     char *tok;
     real_t num;
     

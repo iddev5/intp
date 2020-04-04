@@ -33,7 +33,7 @@ void intp_set_data_from(intp_info *info, intp_data *data) {
 
 intp_data *NEW_DATA(const char *name, int type, void *value) {
     intp_data *data = ALLOC(intp_data*, 1);
-    strcpy(data->name, name);
+    data->name = NEW_STRING(name);
     data->type = type;
 
     switch(data->type) {

@@ -8,20 +8,27 @@ const char *keywords[] = {
 };
 
 static inline char this_ch(intp_src_buf *buf) {
-    return *buf->data;
+    if(buf->input == INPUT_FILE) { return buf->th; }
+    else { return *buf->data; }
 }
 
 static inline char prev_ch(intp_src_buf *buf) {
-    return *(buf->data-1);
+    if(buf->input == INPUT_FILE) { return buf->pr; }
+    else { return *(buf->data-1); }
 }
 
 static inline char next_ch(intp_src_buf *buf) {
-    return *buf->data++;
+    if(buf->input == INPUT_FILE) { 
+        buf->pr = buf->th; 
+        buf->th = fgetc(buf->file); 
+        return buf->pr; 
+    }
+    else { return *buf->data++; }
 }
 
 static inline char next_ch_get(intp_src_buf *buf) {
-    buf->data++; 
-    return *buf->data;
+    next_ch(buf); 
+    return this_ch(buf);
 }
 
 /* A macro used for copying string and identifiers
@@ -49,7 +56,7 @@ int intp_lex(intp_src_buf *buf) {
     buf->type = -1;
 lexl:
     switch(this_ch(buf)) {
-        case '\0': break;
+        case '\0': case EOF: break;
         case ' ' : count; next_ch(buf); goto lexl;
         case '\t': buf->col+=4; buf->len+=4; next_ch(buf); goto lexl;
         case '\n': buf->col=1; buf->line++; buf->len++; next_ch(buf); goto lexl;

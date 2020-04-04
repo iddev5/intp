@@ -53,6 +53,7 @@ void intp_string(intp_info *info , char *str) {
     }
 
     info->buf->filename = NEW_STRING("<string>");
+    info->buf->input = INPUT_STRING;
     intp_interp(info->buf, info);
 }
 
@@ -62,30 +63,12 @@ void intp_file(intp_info *info, char *fn) {
         intp_error_std("Cannot open input file: ", fn);
     }
 
-    /* Get the size of the file */
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    rewind(file);
 
-    /* Check the size */
-    if(size <= 0) {
-        intp_error_std("Fatal Error: Invalid size of input file: ", fn);
-    }
-
-    /* Allocate memory */
-    info->buf->data = ALLOC(char*, size);
-    if(info->buf->data == NULL) {
-        intp_error_std("Cannot allocate memory");
-    }
-
-    /* Read the file content and copy to buffer */
-    if(!fread(info->buf->data, 1, size+1, file)) {
-        intp_error_std("Cannot read input file");
-    }
-
-    fclose(file);
-    info->buf->data[size+1] = '\0'; /* Append NULL termination */
+    info->buf->file = file;
     info->buf->filename = NEW_STRING(fn);
+    info->buf->input = INPUT_FILE;
+    info->buf->th = fgetc(info->buf->file);
+
     intp_interp(info->buf, info);
 }
 

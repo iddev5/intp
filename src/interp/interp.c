@@ -173,7 +173,7 @@ void intp_interp(intp_src_buf *buf, intp_info* info) {
     while(true) {
         stmt(buf, info);
         
-        if(*buf->data == '\0') { break; }
+        if(*buf->data == '\0' || feof(buf->file)) { break; }
     }
 
 #ifdef INTP_DEBUG
