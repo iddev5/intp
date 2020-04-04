@@ -122,11 +122,7 @@ intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_inf
             case KWD_AND: val = val0 && val1; break;
             case KWD_OR : val = val0 || val1; break;
             case WAL: {
-                intp_data *data = ALLOC(intp_data*, 1);
-                data->name = NEW_STRING(lhs->name);
-                data->type = rhs->type;
-                data->val.num = val1;
-                intp_set_data_from(info, data);
+                intp_set_data(info, lhs->name, rhs->type, &val1);
                 val = val1; 
                 break;
             }
