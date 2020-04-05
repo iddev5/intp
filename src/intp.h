@@ -89,14 +89,13 @@ enum input_type {
 
 typedef struct intp_data {
     char *name;
-    uint8_t  type;
+    int type;
     uint32_t scope;
     
     union {
-        real_t num;
-        char *str;
+        struct { real_t num; };
+        struct { char *str;  };
     } val;
-
 } intp_data;
 
 typedef struct intp_src_buf {
@@ -109,17 +108,15 @@ typedef struct intp_src_buf {
         struct { FILE *file; char th, pr; };
     };
 
-    int32_t type;
-    char *tok;
-    real_t num;
-    
+    int type;
+    struct { char *tok;  };
+    struct { real_t num; };
 } intp_src_buf;
 
 typedef struct intp_info {
     uint32_t scope;
 	intp_src_buf *buf;
     intp_data **objs;
-
 } intp_info;
 
 /* Log file of the interpreter. */

@@ -54,6 +54,10 @@ _skip:
         }
     }
 
+    /*if(cond->type == STR_T) { free(cond->val.str); }*/
+    /*if(cond->name != NULL) { free(cond->name); }*/
+    free(cond);
+    
     return;
 }
 
@@ -124,7 +128,13 @@ void stmt(intp_src_buf *buf, intp_info *info) {
                     long i = 0;
                     while(i < (stbds_arrlen(info->objs))) {
                         intp_data data = *info->objs[i];
-                        if(info->scope == data.scope) { stbds_arrdel(info->objs, i); i--; } 
+                        if(info->scope == data.scope) { 
+                            if(data.type == STR_T) { free(data.val.str); }
+                            free(data.name);
+                            free(info->objs[i]);
+                            stbds_arrdel(info->objs, i); 
+                            i--; 
+                        } 
                         else { i++; }
                     }
                     info->scope--;

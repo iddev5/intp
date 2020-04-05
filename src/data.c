@@ -9,15 +9,8 @@ intp_data *intp_get_data(intp_info *info, char* name) {
             req->type = data->type;
 
             switch(req->type) {
-                case NUM_T: {
-                    req->val.num = data->val.num;
-                    break; 
-                }
-
-                case STR_T: {
-                    req->val.str = NEW_STRING(data->val.str);
-                    break;
-                }
+                case NUM_T: { req->val.num = data->val.num; break; }
+                case STR_T: { req->val.str = NEW_STRING(data->val.str); break; }
             }
             return req;
         }

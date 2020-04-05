@@ -28,12 +28,23 @@ int intp_init(intp_info *info) {
 
 void intp_free(intp_info *info) {
     /* Dellocate everything */
+    
+    /* Close the log file */
     fclose(logfile);
+
+    /* Free all the intp_data */
+    for(int i=0; i<stbds_arrlen(info->objs); i++) {
+        if(info->objs[i]->type == STR_T) { free(info->objs[i]->val.str); }
+        free(info->objs[i]->name);
+        free(info->objs[i]);
+    }
     stbds_arrfree(info->objs);
 
-    /* Free if it is not empty. */
-    if(strlen(info->buf->data) != 0) { free(info->buf->data); }
+    /* Free intp_buf */
+    if(info->buf->input == INPUT_STRING && strlen(info->buf->data) != 0) { free(info->buf->data); }
+    else if(info->buf->input == INPUT_FILE) { fclose(info->buf->file); }
     free(info->buf->tok);
+    free(info->buf->filename);
     free(info->buf);
 
 #ifdef INTP_DEBUG
@@ -62,7 +73,6 @@ void intp_file(intp_info *info, char *fn) {
     if(file == NULL) {
         intp_error_std("Cannot open input file: ", fn);
     }
-
 
     info->buf->file = file;
     info->buf->filename = NEW_STRING(fn);
