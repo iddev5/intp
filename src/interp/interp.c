@@ -101,7 +101,7 @@ void stmt(intp_src_buf *buf, intp_info *info) {
                                     else { intp_error(buf, "Division by zero"); } break;
                                 case POWEQU: data->val.num = POWf(data->val.num, val->val.num); break;
                                 case MODEQU: 
-                                    if(val != 0) { data->val.num = (int64_t)data->val.num % (int64_t)val->val.num; }
+                                    if(val->val.num != 0) { data->val.num = (int64_t)data->val.num % (int64_t)val->val.num; }
                                     else { intp_error(buf, "Division by zero"); } break;
                                     break;
                                 case XOREQU: 
@@ -112,8 +112,11 @@ void stmt(intp_src_buf *buf, intp_info *info) {
                                 case RSHEQU: break;
                             }
                         }
+                        intp_set_data_from(info, data);
                     }
-                    else { intp_error(buf, "Operands are of different type"); }
+                    else { free(data); intp_error(buf, "Operands are of different type"); }
+
+                    free(val);
                 }
                 check_semi(buf, info);
             }

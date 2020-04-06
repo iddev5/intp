@@ -128,8 +128,10 @@ intp_data *binop_expr(int expr_prec, intp_data *lhs, intp_src_buf *buf, intp_inf
             }
             default: intp_error(buf, "Invalid operator"); break;
         }
+        free(lhs);
         lhs = NEW_DATA("", NUM_T, &val);
     }
+    free(rhs->name);
     free(rhs);
 }
 
