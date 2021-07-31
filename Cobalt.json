@@ -1,0 +1,13 @@
+{
+    "id": "intp",
+    "type": "application",
+    "src": [
+        "src/core.c",
+        "src/lexer.c",
+        "src/interp/expr.c",
+        "src/interp/interp.c",
+        "src/log.c",
+        "src/data.c",
+        "intpcli.c"
+    ]
+}

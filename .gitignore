@@ -2,13 +2,16 @@
 *.intp
 *.log
 
-# Executables and Object FIles
+# Executables and Object Files
 intp
 *.o
 
 # Addiditonal files by CodeBlocks IDE
 *.depend
 *.layout
+
+# Cobalt build system
+builddir/
 
 # /proj/CodeBlocks/bin*
 # /proj/CodeBlocks/object*
